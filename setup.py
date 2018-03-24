@@ -1,6 +1,4 @@
 from setuptools import find_packages, setup, Extension
-#from distutils.core import setup, Extension
-import glob
 
 try:
     import rpy2
@@ -27,7 +25,5 @@ setup(
     author_email = 'wckdouglas@gmail.com',
     license = 'MIT',
     packages = find_packages(),
-    zip_safe = False,
-    ext_modules = ext_modules,
-    cmdclass = {'build_ext': build_ext}
+    zip_safe = False
 )
