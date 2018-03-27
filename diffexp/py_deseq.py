@@ -68,8 +68,8 @@ class py_DESeq2:
 
     def normalized_count(self):
         normalized_count_matrix = deseq.counts_DESeqDataSet(self.dds, normalized=True)
-        normalized_count_matrix = pandas2ri.ri2py(normalized_count_matrix)  
-        self.normalized_count_df = pd.DataFrame(normalized_count_matrix) 
-        self.normalized_count_df.columns = self.samplenames
+        normalized_count_matrix = to_dataframe(normalized_count_matrix)
+        # switch back to python
+        self.normalized_count_df = pandas2ri.ri2py(normalized_count_matrix)  
         self.normalized_count_df[self.gene_column] = self.gene_id.values
         return self.normalized_count_df
