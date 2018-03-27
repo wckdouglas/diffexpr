@@ -42,9 +42,10 @@ class py_DESeq2:
         self.deseq_result = None
         self.resLFC = None
         self.comparison = None
-        self.normalized_count_matrix = None
+        self.normalized_count_df = None
         self.gene_column = gene_column
         self.gene_id = count_matrix[self.gene_column]
+        self.samplenames = count_matrix.columns[count_matrix.columns != gene_column]
         self.count_matrix = pandas2ri.py2ri(count_matrix.drop(gene_column,axis=1))
         self.design_matrix = pandas2ri.py2ri(design_matrix)
         self.design_formula = Formula(design_formula)
@@ -66,5 +67,9 @@ class py_DESeq2:
         self.deseq_result[self.gene_column] = self.gene_id.values
 
     def normalized_count(self):
-        self.normalized_count_matrix = deseq.counts_DESeqDataSet(self.dds, normalized=True)
-        return normalized_count_matrix
+        normalized_count_matrix = deseq.counts_DESeqDataSet(self.dds, normalized=True)
+        normalized_count_matrix = pandas2ri.ri2py(self.normalized_count_matrix)  
+        self.normalized_count_df = pd.DataFrame(normalized_count_matrix) 
+        self.normalized_count_df.columns = self.samplenames
+        self.normalized_count_df[gene_column] = self.gene_id
+        return self.normalized_count_matrix
