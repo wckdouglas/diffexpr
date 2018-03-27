@@ -66,5 +66,5 @@ class py_DESeq2:
         self.deseq_result[self.gene_column] = self.gene_id.values
 
     def normalized_count(self):
-        self.normalized_count_matrix = deseq.counts(self.dds, normalized=True)
+        self.normalized_count_matrix = deseq.counts_DESeqDataSet(self.dds, normalized=True)
         return normalized_count_matrix
