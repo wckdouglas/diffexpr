@@ -44,8 +44,9 @@ class py_DESeq2:
         self.comparison = None
         self.normalized_count_df = None
         self.gene_column = gene_column
-        self.gene_id = count_matrix[self.gene_column]
+        self.gene_id = count_matrix[gene_column]
         self.samplenames = count_matrix.columns[count_matrix.columns != gene_column]
+        count_matrix.index = count_matrix[gene_column]
         self.count_matrix = pandas2ri.py2ri(count_matrix.drop(gene_column,axis=1))
         self.design_matrix = pandas2ri.py2ri(design_matrix)
         self.design_formula = Formula(design_formula)
@@ -63,13 +64,13 @@ class py_DESeq2:
 
         self.deseq_result = deseq.results(self.dds, **kwargs)
         self.deseq_result = to_dataframe(self.deseq_result)
-        self.deseq_result = pandas2ri.ri2py(self.deseq_result) ## back to pandas dataframe
+        self.deseq_result = pandas2ri.ri2py_dataframe(self.deseq_result) ## back to pandas dataframe
         self.deseq_result[self.gene_column] = self.gene_id.values
 
     def normalized_count(self):
         normalized_count_matrix = deseq.counts_DESeqDataSet(self.dds, normalized=True)
         normalized_count_matrix = to_dataframe(normalized_count_matrix)
         # switch back to python
-        self.normalized_count_df = pandas2ri.ri2py(normalized_count_matrix)  
+        self.normalized_count_df = pandas2ri.ri2py_dataframe(normalized_count_matrix)  
         self.normalized_count_df[self.gene_column] = self.gene_id.values
         return self.normalized_count_df
