@@ -17,3 +17,6 @@ conda install bioconductor-deseq2 \
     pandas \
     rpy2 
 ```
+
+## Example ##
+An example of running DESeq2 in *python* using ```diffexp``` package is provided [here](https://github.com/wckdouglas/diffexp/blob/master/example/deseq_example.ipynb).
