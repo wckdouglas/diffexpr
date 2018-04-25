@@ -1,20 +1,35 @@
 from setuptools import find_packages, setup, Extension
 
-try:
-    import rpy2
-except ImportError:
-    raise ImportError("Requires rpy2 to "
-            "be installed before running setup.py (pip install cython)")
-try:
-    import numpy as np
-except ImportError:
-    raise ImportError("Requires numpy to "
-            "be installed before running setup.py (pip install numpy)")
-try:
-    import pandas
-except ImportError:
-    raise ImportError("Requires pysam to "
-            "be installed before running setup.py (pip install pysam)")
+
+def check_package(package = 'rpy2'):
+    import importlib
+    try:
+        importlib.import_module(package)
+    except (ModuleNotFoundError, ImportError) as e:
+        raise ImportError("Requires {package} to "
+                        "be installed before running setup.py (pip install {package})"\
+                        .format(package = package))
+    finally:
+        pass
+
+_ = [check_package(p) for p in ['rpy2','numpy','pandas']]
+
+
+#try:
+#    import rpy2
+#except ImportError:
+#    raise ImportError("Requires rpy2 to "
+#            "be installed before running setup.py (pip install cython)")
+#try:
+#    import numpy as np
+#except ImportError:
+#    raise ImportError("Requires numpy to "
+#            "be installed before running setup.py (pip install numpy)")
+#try:
+#    import pandas
+#except ImportError:
+#    raise ImportError("Requires pandas to "
+#            "be installed before running setup.py (pip install pandas)")
 
 setup(
     name = 'diffexp',
