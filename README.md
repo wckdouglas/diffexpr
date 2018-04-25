@@ -1,4 +1,4 @@
-# diffexp #
+# diffexpr #
 
 A python package using ```rpy2``` to port [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) and [DEXSeq](https://bioconductor.org/packages/release/bioc/html/DEXSeq.html) into python.
 
