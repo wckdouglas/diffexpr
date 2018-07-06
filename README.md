@@ -1,4 +1,4 @@
-# diffexp #
+# diffexpr #
 
 A python package using ```rpy2``` to port [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) and [DEXSeq](https://bioconductor.org/packages/release/bioc/html/DEXSeq.html) into python.
 
@@ -17,3 +17,6 @@ conda install bioconductor-deseq2 \
     pandas \
     rpy2 
 ```
+
+## Example ##
+An example of running DESeq2 in *python* using ```diffexp``` package is provided [here](https://github.com/wckdouglas/diffexp/blob/master/example/deseq_example.ipynb).

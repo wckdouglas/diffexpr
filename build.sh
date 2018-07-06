@@ -6,5 +6,6 @@ conda config --add channels conda-forge
 conda install bioconductor-deseq2 \
 	bioconductor-dexseq \
 	pandas \
-	rpy2 
+	rpy2  \
+	biopython
 
