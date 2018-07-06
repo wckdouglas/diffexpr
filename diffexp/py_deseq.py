@@ -44,10 +44,9 @@ class py_DESeq2:
         self.comparison = None
         self.normalized_count_df = None
         self.gene_column = gene_column
-        self.gene_id = count_matrix[gene_column]
-        self.samplenames = count_matrix.columns[count_matrix.columns != gene_column]
-        count_matrix.index = count_matrix[gene_column]
-        self.count_matrix = pandas2ri.py2ri(count_matrix.drop(gene_column,axis=1))
+        self.gene_id = count_matrix[self.gene_column]
+        self.samplenames = count_matrix.columns[count_matrix.columns != self.gene_column]
+        self.count_matrix = pandas2ri.py2ri(count_matrix.set_index(self.gene_column))
         self.design_matrix = pandas2ri.py2ri(design_matrix)
         self.design_formula = Formula(design_formula)
 
