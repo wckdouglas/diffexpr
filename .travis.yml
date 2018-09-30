@@ -19,13 +19,17 @@ install:
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
+  - conda config --add channels r
+  - conda config --add channels bioconda
+  - conda config --add channels auto
+  - conda config --add channels conda-forge
 
   # Replace dep1 dep2 ... with your dependencies
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION dep1 dep2 ...
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION  \
+      bioconductor-deseq2 bioconductor-dexseq pandas rpy2 biopython 
   - source activate test-environment
+  - pip install .
 
-  # run actual build
-  - bash build.sh
 
 # command to run tests
 script:

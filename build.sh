@@ -10,4 +10,3 @@ conda install bioconductor-deseq2 \
 	biopython
 
 pip install .
-
