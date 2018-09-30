@@ -48,5 +48,6 @@ def test_result():
     py = pd.read_table(test_data_path + '/py_deseq.tsv') 
     R = pd.read_table(test_data_path + '/R_deseq.tsv') 
 
-    assert(np.all(np.isclose(py.padj.fillna(0), R.padj.fillna(0))))
-    assert(np.all(np.isclose(py.log2FoldChange.fillna(0), R.log2FoldChange.fillna(0))))
+    for col in py.columns:
+        if py.columns.dtype == 'float64':
+            assert(np.all(np.isclose(py[col].fillna(0), R[col].fillna(0))))
