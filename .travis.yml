@@ -4,7 +4,7 @@ python:
   - "3.6"
 # command to install dependencies
 install:
-  - bash install.sh
+  - bash build.sh
 
 # command to run tests
 script:
