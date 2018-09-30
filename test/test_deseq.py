@@ -3,6 +3,8 @@ import os
 import pandas as pd 
 import numpy as np
 from diffexpr.py_deseq import py_DESeq2
+import warnings
+warnings.filterwarnings("ignore")
 test_data_path = os.path.dirname(os.path.realpath(__file__)) + '/data'
 
 
@@ -37,3 +39,14 @@ def test_deseq():
     assert(res.query('padj < 0.05').shape == (43,7))
 
     res.to_csv(test_data_path + '/py_deseq.tsv', index=False, sep='\t')
+
+
+def test_result():
+    os.chdir(os.path.dirname(test_data_path))
+    os.system('Rscript deseq.R')
+
+    py = pd.read_table(test_data_path + '/py_deseq.tsv') 
+    R = pd.read_table(test_data_path + '/R_deseq.tsv') 
+
+    assert(np.all(np.isclose(py.padj.fillna(0), R.padj.fillna(0))))
+    assert(np.all(np.isclose(py.log2FoldChange.fillna(0), R.log2FoldChange.fillna(0))))
