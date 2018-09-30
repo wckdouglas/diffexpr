@@ -26,7 +26,7 @@ install:
 
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION  
-      bioconductor-deseq2 bioconductor-dexseq pandas rpy2 biopython 
+      bioconductor-deseq2 bioconductor-dexseq pandas rpy2 biopython pytest
   - source activate test-environment
   - pip install .
 
