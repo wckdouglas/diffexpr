@@ -2,7 +2,7 @@
 import os
 import pandas as pd 
 import numpy as np
-from diffexp.py_deseq import py_DESeq2
+from diffexpr.py_deseq import py_DESeq2
 test_data_path = os.path.dirname(os.path.realpath(__file__)) + '/data'
 
 
