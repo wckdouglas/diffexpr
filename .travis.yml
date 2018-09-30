@@ -5,6 +5,7 @@ python:
 # command to install dependencies
 install:
   - bash install.sh
+
 # command to run tests
 script:
   - pytest
