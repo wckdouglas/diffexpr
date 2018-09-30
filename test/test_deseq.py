@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import os
+import pandas as pd 
+import numpy as np
+from diffexp.py_deseq import py_DESeq2
 test_data_path = os.path.dirname(os.path.realpath(__file__)) + '/data'
 
 
 def test_deseq():
-    import pandas as pd 
-    import numpy as np
-    from diffexp.py_deseq import py_DESeq2
 
     df = pd.read_table(test_data_path + '/ercc.tsv')
     """
