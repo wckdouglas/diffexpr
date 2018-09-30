@@ -5,7 +5,7 @@ def check_package(package = 'rpy2'):
     import importlib
     try:
         importlib.import_module(package)
-    except (ModuleNotFoundError, ImportError) as e:
+    except ImportError as e:
         raise ImportError("Requires {package} to "
                         "be installed before running setup.py (pip install {package})"\
                         .format(package = package))
