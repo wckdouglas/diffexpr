@@ -50,13 +50,14 @@ class py_DESeq2:
         self.count_matrix = pandas2ri.py2ri(count_matrix.drop(gene_column,axis=1))
         self.design_matrix = pandas2ri.py2ri(design_matrix)
         self.design_formula = Formula(design_formula)
-
-
-    def run_deseq(self, **kwargs):
         self.dds = deseq.DESeqDataSetFromMatrix(countData=self.count_matrix, 
                                         colData=self.design_matrix,
                                         design=self.design_formula)
+
+
+    def run_deseq(self, **kwargs):
         self.dds = deseq.DESeq(self.dds, **kwargs)
+
 
     def get_deseq_result(self, **kwargs):
 
