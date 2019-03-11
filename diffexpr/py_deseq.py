@@ -3,6 +3,7 @@ import rpy2.robjects as robjects
 from rpy2.robjects import pandas2ri, Formula
 pandas2ri.activate()
 from rpy2.robjects.packages import importr
+import numpy as np
 deseq = importr('DESeq2')
 '''
 Adopted from: https://stackoverflow.com/questions/41821100/running-deseq2-through-rpy2
@@ -59,11 +60,16 @@ class py_DESeq2:
         self.dds = deseq.DESeq(self.dds, **kwargs)
 
 
-    def get_deseq_result(self, **kwargs):
+    def get_deseq_result(self, contrast=None, **kwargs):
 
         self.comparison = deseq.resultsNames(self.dds)
-
-        self.deseq_result = deseq.results(self.dds, **kwargs)
+        if contrast:
+            assert(len(contrast)==3, 'Contrast not correct')
+            print('Using contrast: ', contrast)
+            contrast = robjects.numpy2ri.numpy2ri(np.array(contrast)) 
+            self.deseq_result = deseq.results(self.dds, contrast = contrast, **kwargs)
+        else:
+            self.deseq_result = deseq.results(self.dds, **kwargs)
         self.deseq_result = to_dataframe(self.deseq_result)
         self.deseq_result = pandas2ri.ri2py_dataframe(self.deseq_result) ## back to pandas dataframe
         self.deseq_result[self.gene_column] = self.gene_id.values
