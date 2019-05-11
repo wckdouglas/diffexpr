@@ -10,7 +10,7 @@ test_data_path = os.path.dirname(os.path.realpath(__file__)) + '/data'
 
 def test_deseq():
 
-    df = pd.read_table(test_data_path + '/ercc.tsv')
+    df = pd.read_csv(test_data_path + '/ercc.tsv', sep='\t')
     """
         id     A_1     A_2     A_3     B_1     B_2     B_3
     0  ERCC-00002  111461  106261  107547  333944  199252  186947
