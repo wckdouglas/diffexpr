@@ -63,9 +63,12 @@ class py_DESeq2:
 
         self.comparison = deseq.resultsNames(self.dds)
         if contrast:
-            assert len(contrast)==3, 'Contrast not correct'
+            if len(contrast)==3:
+                contrast = robjects.numpy2ri.numpy2ri(np.array(contrast)) 
+            else:
+                assert len(contrast) == 2, 'Contrast must be length of 3 or 2'
+                contrast = robjects.ListVector({None:con for con in contrast})
             print('Using contrast: ', contrast)
-            contrast = robjects.numpy2ri.numpy2ri(np.array(contrast)) 
             self.deseq_result = deseq.results(self.dds, contrast = contrast, **kwargs)
         else:
             self.deseq_result = deseq.results(self.dds, **kwargs)
