@@ -81,7 +81,7 @@ class pathwayview:
         # change color for pathway elements
         for entry in pathway.entries.values():
             possible_gene_names = entry.graphics[0].name
-            matched_name = gene_is_enriched(enriched_genes, )
+            matched_name = gene_is_enriched(enriched_genes, possible_gene_names)
             if matched_name:
                 entry.graphics[0].bgcolor = self.enriched_box_color #set box color
                 entry.graphics[0].fgcolor = self.enriched_text_color # set text color

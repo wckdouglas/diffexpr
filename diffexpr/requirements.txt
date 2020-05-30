@@ -2,3 +2,4 @@ pandas>=1.0.4
 rpy2>=3.3.2
 numpy>=1.18.4
 biopython>=1.76
+ReportLab>=3.5
