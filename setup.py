@@ -40,5 +40,8 @@ setup(
     author_email = 'wckdouglas@gmail.com',
     license = 'MIT',
     packages = find_packages(),
-    zip_safe = False
+    zip_safe = False,
+    install_requires=[
+        'pandas',
+        'rpy2']
 )

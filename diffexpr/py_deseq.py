@@ -1,7 +1,7 @@
 import pandas as pd
 import rpy2.robjects as robjects
 from rpy2.robjects import pandas2ri, Formula
-pandas2ri.activate()
+from rpy2.robjects.conversion import localconverter
 from rpy2.robjects.packages import importr
 import numpy as np
 deseq = importr('DESeq2')
@@ -47,8 +47,9 @@ class py_DESeq2:
         self.gene_column = gene_column
         self.gene_id = count_matrix[self.gene_column]
         self.samplenames = count_matrix.columns[count_matrix.columns != self.gene_column]
-        self.count_matrix = pandas2ri.py2ri(count_matrix.set_index(self.gene_column))
-        self.design_matrix = pandas2ri.py2ri(design_matrix)
+        with localconverter(robjects.default_converter + pandas2ri.converter):
+            self.count_matrix = robjects.conversion.py2rpy(count_matrix.set_index(self.gene_column))
+            self.design_matrix = robjects.conversion.py2rpy(design_matrix)
         self.design_formula = Formula(design_formula)
         self.dds = deseq.DESeqDataSetFromMatrix(countData=self.count_matrix, 
                                         colData=self.design_matrix,
@@ -73,13 +74,15 @@ class py_DESeq2:
         else:
             self.deseq_result = deseq.results(self.dds, **kwargs)
         self.deseq_result = to_dataframe(self.deseq_result)
-        self.deseq_result = pandas2ri.ri2py_dataframe(self.deseq_result) ## back to pandas dataframe
+        with localconverter(robjects.default_converter + pandas2ri.converter):
+            self.deseq_result = robjects.conversion.rpy2py(self.deseq_result) ## back to pandas dataframe
         self.deseq_result[self.gene_column] = self.gene_id.values
 
     def normalized_count(self):
         normalized_count_matrix = deseq.counts_DESeqDataSet(self.dds, normalized=True)
         normalized_count_matrix = to_dataframe(normalized_count_matrix)
         # switch back to python
-        self.normalized_count_df = pandas2ri.ri2py_dataframe(normalized_count_matrix)  
+        with localconverter(robjects.default_converter + pandas2ri.converter):
+            self.normalized_count_df = robjects.conversion.rpy2py(normalized_count_matrix)  
         self.normalized_count_df[self.gene_column] = self.gene_id.values
         return self.normalized_count_df
