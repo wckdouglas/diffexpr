@@ -33,4 +33,8 @@ install:
 
 # command to run tests
 script:
-  - pytest --cov=diffexpr test
+  - py.test  --cov-report term --cov=test/
+
+after_success:
+    - codecov
+
