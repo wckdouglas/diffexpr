@@ -1,6 +1,4 @@
-r = getOption("repos")
-r["CRAN"] = "http://cran.us.r-project.org"
-options(repos = r) 
-
-install.packages('BiocManager')
+install.packages(c('BiocManager','Hmisc'), 
+                 dependencies='Depends',
+                repo = "http://cran.us.r-project.org")
 BiocManager::install('DESeq2')
