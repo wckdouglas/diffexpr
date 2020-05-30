@@ -24,7 +24,7 @@ install:
 
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION  
-      pandas rpy2 biopython ReportLab pytest-cov
+      pandas tzlocal rpy2 biopython ReportLab pytest-cov
   - source activate test-environment
   - pip install .
   # install deseq2
