@@ -24,7 +24,7 @@ install:
 
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION  
-      pandas rpy2 biopython pytest
+      pandas rpy2 biopython pytest-cov
   - source activate test-environment
   - pip install .
   # install deseq2
@@ -33,4 +33,4 @@ install:
 
 # command to run tests
 script:
-  - pytest
+  - pytest --cov=diffexpr test
