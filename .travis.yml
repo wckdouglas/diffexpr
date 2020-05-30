@@ -36,7 +36,7 @@ install:
 
 # command to run tests
 script:
-  - py.test  --cov-report term --cov=test/
+  - coverage run -m pytest
 
 after_success:
     - codecov
