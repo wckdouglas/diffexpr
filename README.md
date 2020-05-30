@@ -14,8 +14,10 @@ conda config --add channels bioconda
 conda config --add channels auto
 conda config --add channels conda-forge
 
-conda install pandas rpy2
+conda create -q -n diffexpr python=3.6
+      pandas tzlocal rpy2 biopython ReportLab pytest-cov
 Rscript setup.R #to install DESeq2 correctly 
+python setup.py install
 ```
 
 ## Example ##
