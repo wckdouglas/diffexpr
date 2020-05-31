@@ -29,14 +29,17 @@ def test_deseq():
 
     dds = py_DESeq2(count_matrix = df,
                design_matrix = sample_df,
-               design_formula = '~ sample',
+               design_formula = '~ batch + sample',
                gene_column = 'id')
     
     dds.run_deseq() 
     dds.get_deseq_result()
     res = dds.deseq_result 
-    res.query('padj < 0.05')
-    assert(res.query('padj < 0.05').shape == (43,7))
+    assert(res.query('padj < 0.05').shape == (35,7))
+
+    dds.get_deseq_result(contrast = ['sample','B','A'])
+    res = dds.deseq_result 
+    assert(res.query('padj < 0.05').shape == (35,7))
 
     norm_df = dds.normalized_count()
     res.to_csv(test_data_path + '/py_deseq.tsv', index=False, sep='\t')

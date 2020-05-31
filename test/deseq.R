@@ -15,7 +15,7 @@ count_matrix <- subset(df, , -id)
 row.names(count_matrix) <- df$id
 dds <- DESeqDataSetFromMatrix(countData = count_matrix,
                        colData = sample_df, 
-                       design = ~ sample)
+                       design = ~ batch + sample)
 dds <- DESeq(dds)
 res <- results(dds)
 res$id = row.names(res)

@@ -1,6 +1,6 @@
 import pandas as pd
 import rpy2.robjects as robjects
-from rpy2.robjects import pandas2ri, Formula
+from rpy2.robjects import pandas2ri, numpy2ri, Formula
 from rpy2.robjects.conversion import localconverter
 from rpy2.robjects.packages import importr
 import numpy as np
@@ -65,7 +65,7 @@ class py_DESeq2:
         self.comparison = deseq.resultsNames(self.dds)
         if contrast:
             if len(contrast)==3:
-                contrast = robjects.numpy2ri.numpy2ri(np.array(contrast)) 
+                contrast = robjects.vectors.StrVector(np.array(contrast)) 
             else:
                 assert len(contrast) == 2, 'Contrast must be length of 3 or 2'
                 contrast = robjects.ListVector({None:con for con in contrast})
