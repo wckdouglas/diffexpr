@@ -38,6 +38,7 @@ def test_deseq():
     res.query('padj < 0.05')
     assert(res.query('padj < 0.05').shape == (43,7))
 
+    norm_df = dds.normalized_count()
     res.to_csv(test_data_path + '/py_deseq.tsv', index=False, sep='\t')
 
 
