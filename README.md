@@ -9,13 +9,13 @@ Dependencies are ```pandas``` (python), ```rpy2``` (python), and ```DESeq2``` (R
 Best way to build dependencies should be via conda. 
 
 ```
-conda config --add channels r
+conda config --add channels defaults
 conda config --add channels bioconda
-conda config --add channels auto
 conda config --add channels conda-forge
-
-conda create -q -n diffexpr python=3.6
-      pandas tzlocal rpy2 biopython ReportLab pytest-cov
+conda create -q -n diffexpr python=3.6 \
+    pandas tzlocal rpy2 biopython ReportLab pytest-cov \
+    bioconductor-deseq2 codecov
+conda activate diffexpr # activate diffexpr environment
 Rscript setup.R #to install DESeq2 correctly 
 python setup.py install
 ```

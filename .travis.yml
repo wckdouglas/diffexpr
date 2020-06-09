@@ -28,7 +28,7 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION  
       pandas tzlocal rpy2 biopython ReportLab pytest-cov bioconductor-deseq2 
       codecov
-  - source activate test-environment
+  - conda activate test-environment
   - pip install .
   # install deseq2
   - Rscript setup.R
