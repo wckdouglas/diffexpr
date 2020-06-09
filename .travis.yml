@@ -39,5 +39,5 @@ script:
   - coverage run -m pytest
 
 after_success:
-    - codecov
+    - bash <(curl -s https://codecov.io/bash)
 
