@@ -4,6 +4,9 @@ from rpy2.robjects import pandas2ri, numpy2ri, Formula
 from rpy2.robjects.conversion import localconverter
 from rpy2.robjects.packages import importr
 import numpy as np
+import logging
+logging.basicConfig(level = logging.INFO)
+logger = logging.getLogger('DESeq2')
 deseq = importr('DESeq2')
 '''
 Adopted from: https://stackoverflow.com/questions/41821100/running-deseq2-through-rpy2
@@ -40,6 +43,7 @@ class py_DESeq2:
             sys.exit('Wrong Pandas dataframe?')
 
         self.dds = None
+        self.result = None
         self.deseq_result = None
         self.resLFC = None
         self.comparison = None
@@ -61,28 +65,47 @@ class py_DESeq2:
 
 
     def get_deseq_result(self, contrast=None, **kwargs):
+        '''
+        DESeq2: result(dds, contrast)
+        '''
 
-        self.comparison = deseq.resultsNames(self.dds)
+        self.comparison = list(deseq.resultsNames(self.dds))
         if contrast:
             if len(contrast)==3:
-                contrast = robjects.vectors.StrVector(np.array(contrast)) 
+                R_contrast = robjects.vectors.StrVector(np.array(contrast)) 
             else:
                 assert len(contrast) == 2, 'Contrast must be length of 3 or 2'
-                contrast = robjects.ListVector({None:con for con in contrast})
-            print('Using contrast: ', contrast)
-            self.deseq_result = deseq.results(self.dds, contrast = contrast, **kwargs)
+                R_contrast = robjects.ListVector({None:con for con in contrast})
+            logger.info('Using contrast: %s' %contrast)
+            self.result = deseq.results(self.dds, contrast = R_contrast, **kwargs) # Robject
         else:
-            self.deseq_result = deseq.results(self.dds, **kwargs)
-        self.deseq_result = to_dataframe(self.deseq_result)
+            self.result = deseq.results(self.dds, **kwargs) # R object
+        self.deseq_result = to_dataframe(self.result) # R dataframe
         with localconverter(robjects.default_converter + pandas2ri.converter):
             self.deseq_result = robjects.conversion.rpy2py(self.deseq_result) ## back to pandas dataframe
         self.deseq_result[self.gene_column] = self.gene_id.values
 
     def normalized_count(self):
+        '''
+        return Counts(dds, normalized=TRUE)
+        '''
         normalized_count_matrix = deseq.counts_DESeqDataSet(self.dds, normalized=True)
         normalized_count_matrix = to_dataframe(normalized_count_matrix)
         # switch back to python
         with localconverter(robjects.default_converter + pandas2ri.converter):
             self.normalized_count_df = robjects.conversion.rpy2py(normalized_count_matrix)  
         self.normalized_count_df[self.gene_column] = self.gene_id.values
+        logger.info('Normalizing counts')
         return self.normalized_count_df
+
+    def lfcShrink(self, coef, type = 'apeglm'):
+        '''
+        Perform LFC shrinkage on the DDS object
+        see: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
+        '''
+        lfc = deseq.lfcShrink(self.dds, res = self.result, coef = coef)
+        with localconverter(robjects.default_converter + pandas2ri.converter):
+            lfc = robjects.conversion.rpy2py(to_dataframe( lfc))
+        return lfc\
+            .reset_index()\
+            .rename(columns = {'index':self.gene_column})
