@@ -41,6 +41,10 @@ def test_deseq():
     res = dds.deseq_result 
     assert(res.query('padj < 0.05').shape == (35,7))
 
+    lfc_res = dds.lfcShrink(coef=4, method='apeglm')
+    assert(lfc_res[lfc_res.padj < 0.05].shape[0] == 35)
+
+
     norm_df = dds.normalized_count()
     res.to_csv(test_data_path + '/py_deseq.tsv', index=False, sep='\t')
 

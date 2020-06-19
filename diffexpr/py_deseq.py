@@ -98,14 +98,17 @@ class py_DESeq2:
         logger.info('Normalizing counts')
         return self.normalized_count_df
 
-    def lfcShrink(self, coef, type = 'apeglm'):
+    def lfcShrink(self, coef, method = 'apeglm'):
         '''
         Perform LFC shrinkage on the DDS object
         see: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
+
+        Be sure to check dds.comparison to see which coef (1-base) to use
         '''
-        lfc = deseq.lfcShrink(self.dds, res = self.result, coef = coef)
+        lfc = deseq.lfcShrink(self.dds, res = self.result, coef = coef, type = method)
         with localconverter(robjects.default_converter + pandas2ri.converter):
             lfc = robjects.conversion.rpy2py(to_dataframe( lfc))
+
         return lfc\
             .reset_index()\
             .rename(columns = {'index':self.gene_column})
