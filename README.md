@@ -1,5 +1,5 @@
 # diffexpr # 
-[![Build Status](https://travis-ci.org/wckdouglas/diffexpr.svg?branch=master)](https://travis-ci.org/wckdouglas/diffexpr) [![codecov](https://codecov.io/gh/wckdouglas/diffexpr/branch/master/graph/badge.svg)](https://codecov.io/gh/wckdouglas/diffexpr)
+[![CI](https://github.com/wckdouglas/diffexpr/workflows/CI/badge.svg)](https://github.com/wckdouglas/diffexpr/actions) [![codecov](https://codecov.io/gh/wckdouglas/diffexpr/branch/master/graph/badge.svg)](https://codecov.io/gh/wckdouglas/diffexpr)
 
 
 A python package using ```rpy2``` to port [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) into python.
