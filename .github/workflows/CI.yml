@@ -33,7 +33,6 @@ jobs:
       - name: setup conda
         run: |
           conda config --set always_yes yes --set changeps1 no
-          conda update
           conda info -a
           conda list
           conda config --show-sources
@@ -43,7 +42,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          conda install -c bioconda pandas tzlocal rpy2 biopython ReportLab pytest-cov codecov 
+          conda install -c bioconda pandas tzlocal rpy2 biopython ReportLab pytest-cov codecov gxx_linux-64
           pip install .
 
       - name: install R packages
