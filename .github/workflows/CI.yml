@@ -1,0 +1,58 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: miniconda build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: test-environment
+          python-version: 3.6
+          channels: bioconda,default,anaconda
+          allow-softlinks: true
+          channel-priority: 'flexible'
+          show-channel-urls: true
+          use-only-tar-bz2: true
+          auto-update-conda: true
+
+      - name: setup conda
+        run: |
+          conda config --set always_yes yes --set changeps1 no
+          conda info -a
+          conda list
+          conda config --show-sources
+          conda config --show
+
+
+      - name: Install dependencies
+        run: |
+          conda install -c bioconda pandas tzlocal rpy2 biopython ReportLab pytest-cov codecov
+          pip install .
+
+      - name: install R packages
+        run: |
+          Rscript setup.R
+
+      - name: Test with pytest
+        run: |
+          coverage run -m pytest
+
+      - name: codecov
+        run: |
+          bash <(curl -s https://codecov.io/bash)
+

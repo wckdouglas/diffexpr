@@ -112,3 +112,4 @@ class py_DESeq2:
         return lfc\
             .reset_index()\
             .rename(columns = {'index':self.gene_column})
+    
