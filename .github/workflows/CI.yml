@@ -37,6 +37,7 @@ jobs:
           conda list
           conda config --show-sources
           conda config --show
+          conda install --force-reinstall ld_impl_linux-64
 
 
       - name: Install dependencies
