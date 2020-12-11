@@ -33,11 +33,11 @@ jobs:
       - name: setup conda
         run: |
           conda config --set always_yes yes --set changeps1 no
+          conda update
           conda info -a
           conda list
           conda config --show-sources
           conda config --show
-          conda remove gcc_linux-64 gcc_impl_linux-64 binutils_linux-64 binutils_impl_linux-64
 
 
 
