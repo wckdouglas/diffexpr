@@ -42,7 +42,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          conda install -c bioconda pandas tzlocal rpy2 biopython ReportLab pytest-cov codecov  bioconductor-deseq2
+          conda install  pandas tzlocal rpy2 biopython ReportLab pytest-cov codecov  bioconductor-deseq2
           pip install .
 
       - name: install R packages
