@@ -61,6 +61,9 @@ class py_DESeq2:
 
 
     def run_deseq(self, **kwargs):
+        for arg in kwargs.keys():
+            if arg == 'reduced':
+                kwargs[arg] = Formula(kwargs[arg])
         self.dds = deseq.DESeq(self.dds, **kwargs)
 
 
