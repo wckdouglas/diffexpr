@@ -12,6 +12,7 @@ pandas = "1.0.1"
 tzlocal = "^2.1"
 biopython = "^1.78"
 reportlab = "^3.5.65"
+codecov = "^2.1.11"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.2"

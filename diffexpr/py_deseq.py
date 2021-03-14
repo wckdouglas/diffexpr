@@ -106,7 +106,7 @@ class py_DESeq2:
             if len(contrast)==3:
                 R_contrast = robjects.vectors.StrVector(np.array(contrast)) 
             else:
-                if len(contrast) != 2
+                if len(contrast) != 2:
                     raise ValueError('Contrast must be length of 3 or 2')
                 R_contrast = robjects.ListVector({None:con for con in contrast})
             logger.info('Using contrast: %s' %contrast)
