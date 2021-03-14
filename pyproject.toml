@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "diffexpr"
+version = "0.1.0"
+description = "DESeq2 port in python via rpy2"
+authors = ["Douglas Wu <wckdouglas@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.6.1"
+rpy2 = "3.0.0"
+pandas = "1.0.1"
+tzlocal = "^2.1"
+biopython = "^1.78"
+reportlab = "^3.5.65"
+codecov = "^2.1.11"
+
+[tool.poetry.dev-dependencies]
+pytest = "6.2.2"
+pytest-cov = "2.11.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
