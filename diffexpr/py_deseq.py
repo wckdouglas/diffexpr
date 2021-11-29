@@ -93,9 +93,9 @@ class py_DESeq2:
         )
         """
         
-        for arg in kwargs.keys():
-            if arg == 'reduced':
-                kwargs[arg] = Formula(kwargs[arg])
+        for key, value in kwargs.items():
+            if key == 'reduced':
+                kwargs[key] = Formula(value)
         self.dds = deseq.DESeq(self.dds, **kwargs)
         self.comparison = list(deseq.resultsNames(self.dds))
 
