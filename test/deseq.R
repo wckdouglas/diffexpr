@@ -24,3 +24,12 @@ write.table(data.frame(res),
             sep='\t', 
             row.names=F,
             quote=F)
+
+dds <- DESeq(dds, test="LRT", reduced=~ batch)
+res <- results(dds)
+res$id = row.names(res)
+write.table(data.frame(res), 
+            file = 'data/R_deseq_reduced.tsv', 
+            sep='\t', 
+            row.names=F,
+            quote=F)

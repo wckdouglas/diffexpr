@@ -92,6 +92,10 @@ class py_DESeq2:
             BPPARAM = bpparam()
         )
         """
+        
+        for key, value in kwargs.items():
+            if key == 'reduced':
+                kwargs[key] = Formula(value)
         self.dds = deseq.DESeq(self.dds, **kwargs)
         self.comparison = list(deseq.resultsNames(self.dds))
 
