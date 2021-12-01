@@ -64,7 +64,7 @@ def test_deseq():
     res.to_csv(test_data_path + "/py_deseq_reduced.tsv", index=False, sep="\t")
 
 
-@pytest.mark.parameterize(
+@pytest.mark.parametrize(
     "case,r_table,py_table",
     [
         ("deseq", "R_deseq.tsv", "py_deseq.tsv"),
