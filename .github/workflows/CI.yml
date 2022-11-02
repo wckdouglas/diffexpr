@@ -26,7 +26,7 @@ jobs:
         with:
           activate-environment: test-environment
           python-version: ${{ matrix.python-version }}
-          channels: bioconda,default,anaconda,r,conda-forge
+          channels: conda-forge,bioconda,default,anaconda,r
           allow-softlinks: true
           channel-priority: 'flexible'
           show-channel-urls: true
