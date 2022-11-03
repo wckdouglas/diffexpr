@@ -16,6 +16,8 @@ jobs:
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
+    env:
+      SETUPTOOLS_USE_DISTUTILS: stdlib
     defaults:
       run:
         shell: bash -l {0}
