@@ -49,7 +49,7 @@ jobs:
         run: |
           conda install mamba
           mamba install pandas tzlocal rpy2 biopython ReportLab pytest-cov codecov  bioconductor-deseq2 gfortran_linux-64
-          cp $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64*py $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64_conda_cos7_linux_gnu.py
+          cp $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64_conda*.py $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64_conda_cos7_linux_gnu.py
           pip install .
 
       - name: install R packages
