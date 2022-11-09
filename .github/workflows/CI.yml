@@ -53,8 +53,9 @@ jobs:
           pip install .
       
       - name: hack for missing sysconfigdata
-        if: ${{ matrix.npm }} == 3.6
-        run: cp $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64_conda*.py $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64_conda_linux_gnu.py
+        if: matrix.python-version  == '3.6'
+        run: | 
+          cp $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64_conda*.py $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64_conda_linux_gnu.py
 
       - name: install R packages
         run: |
