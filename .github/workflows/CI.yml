@@ -50,12 +50,12 @@ jobs:
           conda install mamba
           mamba install pandas tzlocal rpy2 biopython ReportLab pytest-cov codecov  bioconductor-deseq2 gfortran_linux-64
       
-      - name: hack for missing sysconfigdata (3.7 and 3.8)
+      - name: hack for missing sysconfigdata (py3.7 and py3.8)
         if: matrix.python-version != '3.6'
         run: |
           cp $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64_conda*.py $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64_conda_cos7_linux_gnu.py
       
-      - name: hack for missing sysconfigdata
+      - name: hack for missing sysconfigdata (py3.6)
         if: matrix.python-version == '3.6'
         run: | 
           ls $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64_conda*.py 
@@ -63,6 +63,7 @@ jobs:
       
       - name: install package
         run: \
+          conda activate test-environment
           pip install .
 
       - name: install R packages
