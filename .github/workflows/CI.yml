@@ -62,7 +62,7 @@ jobs:
           cp $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64_conda*.py $CONDA_PREFIX/lib/python${{ matrix.python-version }}/_sysconfigdata_x86_64_conda_linux_gnu.py
       
       - name: install package
-        run: \
+        run: |
           conda activate test-environment
           pip install .
 
