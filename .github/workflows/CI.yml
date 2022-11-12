@@ -48,7 +48,7 @@ jobs:
       - name: Install dependencies
         run: |
           conda install mamba
-          mamba install pandas tzlocal rpy2 biopython ReportLab pytest-cov codecov  bioconductor-deseq2 gfortran_linux-64
+          mamba install pandas tzlocal rpy2 biopython ReportLab pytest-cov codecov  bioconductor-deseq2 gfortran_linux-64 bioconductor-apeglm
       
       - name: hack for missing sysconfigdata (py3.7 and py3.8)
         if: matrix.python-version != '3.6'
