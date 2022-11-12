@@ -80,7 +80,7 @@ jobs:
 
   build-and-push-image:
     runs-on: ubuntu-latest
-    needs: build-and-c
+    needs: build-and-ci
     permissions:
       contents: read
       packages: write
