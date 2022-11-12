@@ -1,4 +1,4 @@
-name: Push and publish to Docker Hub
+name: Push and publish to ghrc
 on:
   workflow_run:
     workflows: ["CI"]
