@@ -1,3 +1,9 @@
+"""
+Running DESeq2 from python via rpy2
+
+Adopted from: https://stackoverflow.com/questions/41821100/running-deseq2-through-rpy2
+"""
+
 import logging
 
 import numpy as np
@@ -10,9 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("DESeq2")
 deseq = importr("DESeq2")
 summarized_experiment = importr("SummarizedExperiment")
-"""
-Adopted from: https://stackoverflow.com/questions/41821100/running-deseq2-through-rpy2
-"""
+
 
 to_dataframe = robjects.r("function(x) data.frame(x)")
 
