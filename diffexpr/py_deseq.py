@@ -1,21 +1,24 @@
+import logging
+
+import numpy as np
 import pandas as pd
 import rpy2.robjects as robjects
-from rpy2.robjects import pandas2ri, numpy2ri, Formula
+from rpy2.robjects import Formula, numpy2ri, pandas2ri
 from rpy2.robjects.conversion import localconverter
 from rpy2.robjects.packages import importr
-import numpy as np
-import logging
-logging.basicConfig(level = logging.INFO)
-logger = logging.getLogger('DESeq2')
-deseq = importr('DESeq2')
-'''
-Adopted from: https://stackoverflow.com/questions/41821100/running-deseq2-through-rpy2
-'''
 
-to_dataframe = robjects.r('function(x) data.frame(x)')
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("DESeq2")
+deseq = importr("DESeq2")
+"""
+Adopted from: https://stackoverflow.com/questions/41821100/running-deseq2-through-rpy2
+"""
+
+to_dataframe = robjects.r("function(x) data.frame(x)")
+
 
 class py_DESeq2:
-    '''
+    """
     DESeq2 object through rpy2
 
     Args:
@@ -32,7 +35,7 @@ class py_DESeq2:
         geneB    4    5
         geneC    1    2
 
-    Design matrix example:: 
+    Design matrix example::
 
                     treatment
         sampleA1        A
@@ -40,13 +43,14 @@ class py_DESeq2:
         sampleB1        B
         sampleB2        B
 
-    '''
-    def __init__(self, count_matrix, design_matrix, design_formula, gene_column='id'):
+    """
+
+    def __init__(self, count_matrix, design_matrix, design_formula, gene_column="id"):
         try:
-            assert gene_column in count_matrix.columns, 'Wrong gene id column name'
+            assert gene_column in count_matrix.columns, "Wrong gene id column name"
             gene_id = count_matrix[gene_column]
         except AttributeError:
-            sys.exit('Wrong Pandas dataframe?')
+            sys.exit("Wrong Pandas dataframe?")
 
         self.dds = None
         self.result = None
@@ -61,10 +65,9 @@ class py_DESeq2:
             self.count_matrix = robjects.conversion.py2rpy(count_matrix.set_index(self.gene_column))
             self.design_matrix = robjects.conversion.py2rpy(design_matrix)
         self.design_formula = Formula(design_formula)
-        self.dds = deseq.DESeqDataSetFromMatrix(countData=self.count_matrix, 
-                                        colData=self.design_matrix,
-                                        design=self.design_formula)
-
+        self.dds = deseq.DESeqDataSetFromMatrix(
+            countData=self.count_matrix, colData=self.design_matrix, design=self.design_formula
+        )
 
     def run_deseq(self, **kwargs):
         """
@@ -92,52 +95,51 @@ class py_DESeq2:
             BPPARAM = bpparam()
         )
         """
-        
+
         for key, value in kwargs.items():
-            if key == 'reduced':
+            if key == "reduced":
                 kwargs[key] = Formula(value)
         self.dds = deseq.DESeq(self.dds, **kwargs)
         self.comparison = list(deseq.resultsNames(self.dds))
 
-
     def get_deseq_result(self, contrast=None, **kwargs):
-        '''
+        """
         DESeq2: result(dds, contrast)
         making a dds.deseq_result pandas dataframe
-        '''
+        """
 
         if contrast:
-            if len(contrast)==3:
-                R_contrast = robjects.vectors.StrVector(np.array(contrast)) 
+            if len(contrast) == 3:
+                R_contrast = robjects.vectors.StrVector(np.array(contrast))
             else:
                 if len(contrast) != 2:
-                    raise ValueError('Contrast must be length of 3 or 2')
-                R_contrast = robjects.ListVector({None:con for con in contrast})
-            logger.info('Using contrast: %s' %contrast)
-            self.result = deseq.results(self.dds, contrast = R_contrast, **kwargs) # Robject
+                    raise ValueError("Contrast must be length of 3 or 2")
+                R_contrast = robjects.ListVector({None: con for con in contrast})
+            logger.info("Using contrast: %s" % contrast)
+            self.result = deseq.results(self.dds, contrast=R_contrast, **kwargs)  # Robject
         else:
-            self.result = deseq.results(self.dds, **kwargs) # R object
-        self.deseq_result = to_dataframe(self.result) # R dataframe
+            self.result = deseq.results(self.dds, **kwargs)  # R object
+        self.deseq_result = to_dataframe(self.result)  # R dataframe
         with localconverter(robjects.default_converter + pandas2ri.converter):
-            self.deseq_result = robjects.conversion.rpy2py(self.deseq_result) ## back to pandas dataframe
+            self.deseq_result = robjects.conversion.rpy2py(self.deseq_result)  ## back to pandas dataframe
         self.deseq_result[self.gene_column] = self.gene_id.values
 
     def normalized_count(self):
-        '''
+        """
         Returns:
             pd.DataFrame: a dataframe in the format of DESeq2::Counts(dds, normalized=TRUE) in R
-        '''
+        """
         normalized_count_matrix = deseq.counts_DESeqDataSet(self.dds, normalized=True)
         normalized_count_matrix = to_dataframe(normalized_count_matrix)
         # switch back to python
         with localconverter(robjects.default_converter + pandas2ri.converter):
-            self.normalized_count_df = robjects.conversion.rpy2py(normalized_count_matrix)  
+            self.normalized_count_df = robjects.conversion.rpy2py(normalized_count_matrix)
         self.normalized_count_df[self.gene_column] = self.gene_id.values
-        logger.info('Normalizing counts')
+        logger.info("Normalizing counts")
         return self.normalized_count_df
 
-    def lfcShrink(self, coef, method = 'apeglm'):
-        '''
+    def lfcShrink(self, coef, method="apeglm"):
+        """
         Perform LFC shrinkage on the DDS object
         see: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
 
@@ -149,14 +151,9 @@ class py_DESeq2:
 
         Returns:
             pandas.DataFrame: a deseq2 result table
-        '''
-        lfc = deseq.lfcShrink(self.dds, res = self.result, coef = coef, type = method)
+        """
+        lfc = deseq.lfcShrink(self.dds, res=self.result, coef=coef, type=method)
         with localconverter(robjects.default_converter + pandas2ri.converter):
-            lfc = robjects.conversion.rpy2py(to_dataframe( lfc))
+            lfc = robjects.conversion.rpy2py(to_dataframe(lfc))
 
-        return lfc\
-            .reset_index()\
-            .rename(columns = {'index':self.gene_column})
-    
-
-            )
+        return lfc.reset_index().rename(columns={"index": self.gene_column})
