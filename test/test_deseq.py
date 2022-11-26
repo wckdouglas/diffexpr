@@ -58,7 +58,7 @@ def test_deseq():
     assert lfc_res[lfc_res.padj < 0.05].shape[0] == 35
 
     vst = dds.vst()
-    assert vst.shape == sample_df.shape
+    assert vst.shape == df.shape
 
     res.to_csv(test_data_path + "/py_deseq.tsv", index=False, sep="\t")
 
