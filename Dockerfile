@@ -11,7 +11,7 @@ RUN conda config --add channels conda-forge
 RUN conda config --set always_yes yes --set changeps1 no
 
 RUN conda install mamba
-RUN mamba install pandas tzlocal rpy2 biopython ReportLab pytest-cov codecov  bioconductor-deseq2
+RUN mamba install nomkl pandas tzlocal rpy2 biopython ReportLab pytest-cov codecov  bioconductor-deseq2
 RUN conda clean -afy
 
 FROM base as diffexpr
