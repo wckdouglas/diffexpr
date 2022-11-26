@@ -158,3 +158,5 @@ class py_DESeq2:
             .reset_index()\
             .rename(columns = {'index':self.gene_column})
     
+
+            )

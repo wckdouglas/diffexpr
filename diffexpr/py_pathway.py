@@ -14,6 +14,7 @@ def gene_is_enriched(enriched_genes, possible_names):
             return gn
 
 
+
 class pathwayview:
     '''
     Like pathwayview in R, plotting a pathway and labeling the changed genes

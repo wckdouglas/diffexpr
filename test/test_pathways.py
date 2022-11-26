@@ -10,3 +10,4 @@ def test_plotpathway():
                     figurename = 'pathway.pdf')
     assert os.path.isfile('pathway.pdf') 
     assert ( isinstance(pathway, Pathway) )
+
