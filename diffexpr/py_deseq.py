@@ -187,4 +187,4 @@ class py_DESeq2:
         with localconverter(robjects.default_converter + pandas2ri.converter):
             vst_counts = robjects.conversion.rpy2py(vst_df)
 
-        return vst_counts
+        return vst_counts.reset_index().rename(columns={"index": self.gene_column})
