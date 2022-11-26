@@ -1,4 +1,3 @@
-import pandas as pd
 import rpy2.robjects as robjects
 from rpy2.robjects import pandas2ri, numpy2ri, Formula
 from rpy2.robjects.conversion import localconverter
@@ -8,6 +7,7 @@ import logging
 logging.basicConfig(level = logging.INFO)
 logger = logging.getLogger('DESeq2')
 deseq = importr('DESeq2')
+summarized_experiment = importr('SummarizedExperiment')
 '''
 Adopted from: https://stackoverflow.com/questions/41821100/running-deseq2-through-rpy2
 '''
@@ -158,3 +158,30 @@ class py_DESeq2:
             .reset_index()\
             .rename(columns = {'index':self.gene_column})
     
+
+    def vst(self, blind=True, fit_type="parametric"):
+        """
+        deseq varianceStabilizingTransformation
+        see: https://rdrr.io/bioc/DESeq2/man/varianceStabilizingTransformation.html
+
+        Args:
+            blind (bool):  whether to blind the transformation to the experimental design
+            fit_type (str): should be either "parametric", "local", "mean"
+        Returns:
+            pandas.DataFrame: a vst transformed count table
+        """
+        if self.dds is None:
+            raise ValueError("Empty DESeq object")
+
+        acceptable_fit_types = set(["parametric", "local", "mean"])
+        if fit_type not in acceptable_fit_types:
+            raise ValueError(f"fit_type must be {acceptable_fit_types}")
+
+        vst_matrix = summarized_experiment.assay(
+            deseq.varianceStabilizingTransformation(dds.dds, blind=blind, fitType=fit_type)
+        )  #TODO: self
+        vst_df = to_dataframe(vst_matrix)
+        with localconverter(robjects.default_converter + pandas2ri.converter):
+            vst_counts = robjects.conversion.rpy2py(vst_df)
+        
+        return vst_counts

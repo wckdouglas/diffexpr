@@ -56,6 +56,9 @@ def test_deseq():
     lfc_res = dds.lfcShrink(coef=4, method="apeglm")
     assert lfc_res[lfc_res.padj < 0.05].shape[0] == 35
 
+    vst = dds.vst()
+    assert vst.shape == sample_df.shape
+
     res.to_csv(test_data_path + "/py_deseq.tsv", index=False, sep="\t")
 
     dds.run_deseq(test="LRT", reduced="~ batch")
