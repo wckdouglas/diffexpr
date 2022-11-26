@@ -178,8 +178,8 @@ class py_DESeq2:
             raise ValueError(f"fit_type must be {acceptable_fit_types}")
 
         vst_matrix = summarized_experiment.assay(
-            deseq.varianceStabilizingTransformation(dds.dds, blind=blind, fitType=fit_type)
-        )  #TODO: self
+            deseq.varianceStabilizingTransformation(self.dds, blind=blind, fitType=fit_type)
+        )  
         vst_df = to_dataframe(vst_matrix)
         with localconverter(robjects.default_converter + pandas2ri.converter):
             vst_counts = robjects.conversion.rpy2py(vst_df)
