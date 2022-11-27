@@ -70,6 +70,12 @@ def test_deseq(setup_deseq):
     res.to_csv(test_data_path + "/py_deseq_reduced.tsv", index=False, sep="\t")
 
 
+def test_normalized_df(setup_deseq):
+    df, dds = setup_deseq
+    norm_count_df = dds.normalized()
+    assert norm_count_df.shape == df.shape
+
+
 @pytest.mark.parametrize(
     "blind,fit_type",
     [(True, "parametric"), (True, "local"), (True, "mean"), (False, "parametric"), (False, "local"), (False, "mean")],
