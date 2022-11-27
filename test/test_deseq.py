@@ -70,9 +70,9 @@ def test_deseq(setup_deseq):
     res.to_csv(test_data_path + "/py_deseq_reduced.tsv", index=False, sep="\t")
 
 
-def test_normalized_df(setup_deseq):
+def test_normalized_count(setup_deseq):
     df, dds = setup_deseq
-    norm_count_df = dds.normalized()
+    norm_count_df = dds.normalized_count()
     assert norm_count_df.shape == df.shape
 
 
