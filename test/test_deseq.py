@@ -18,8 +18,8 @@ def run_r():
     os.system("Rscript deseq.R")
 
 
-def test_deseq():
-
+@pytest.fixture(scope="module")
+def setup_deseq():
     df = pd.read_csv(test_data_path + "/ercc.tsv", sep="\t")
     """
         id     A_1     A_2     A_3     B_1     B_2     B_3
@@ -45,6 +45,11 @@ def test_deseq():
         gene_column="id",
     )
 
+    return df, dds
+
+
+def test_deseq(setup_deseq):
+    df, dds = setup_deseq
     dds.run_deseq()
     dds.get_deseq_result()
     res = dds.deseq_result
@@ -57,15 +62,22 @@ def test_deseq():
     lfc_res = dds.lfcShrink(coef=4, method="apeglm")
     assert lfc_res[lfc_res.padj < 0.05].shape[0] == 35
 
-    vst = dds.vst()
-    assert vst.shape == df.shape
-
     res.to_csv(test_data_path + "/py_deseq.tsv", index=False, sep="\t")
 
     dds.run_deseq(test="LRT", reduced="~ batch")
     dds.get_deseq_result()
     res = dds.deseq_result
     res.to_csv(test_data_path + "/py_deseq_reduced.tsv", index=False, sep="\t")
+
+
+@pytest.mark.parametrize(
+    "blind,fit_type",
+    [(True, "parametric"), (True, "local"), (True, "mean"), (False, "parametric"), (False, "local"), (False, "mean")],
+)
+def test_vst(setup_deseq, blind, fit_type):
+    df, dds = setup_deseq
+    vst = dds.vst(blind=blind, fit_type=fit_type)
+    assert vst.shape == df.shape
 
 
 @pytest.mark.parametrize(
