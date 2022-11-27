@@ -167,6 +167,17 @@ class py_DESeq2:
         deseq varianceStabilizingTransformation
         see: https://rdrr.io/bioc/DESeq2/man/varianceStabilizingTransformation.html
 
+        Example:
+
+        >>> dds = py_DESeq2(
+                count_matrix=df,
+                design_matrix=sample_df,
+                design_formula="~ batch + sample",
+                gene_column="id",
+        )
+        >>> dds.vst(blind=True, fit_type="parametric")
+
+
         Args:
             blind (bool):  whether to blind the transformation to the experimental design
             fit_type (str): should be either "parametric", "local", "mean"
