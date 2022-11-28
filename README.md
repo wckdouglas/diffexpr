@@ -22,3 +22,22 @@ python setup.py install
 
 ## Example ##
 An example of running DESeq2 in *python* using ```diffexp``` package is provided [here](https://github.com/wckdouglas/diffexp/blob/master/example/deseq_example.ipynb).
+
+
+## Citation ##
+:bangbang: Please cite the original [DESeq2 paper](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8) if you used this package in your work:
+
+```
+@article{Love2014,
+  doi = {10.1186/s13059-014-0550-8},
+  url = {https://doi.org/10.1186/s13059-014-0550-8},
+  year = {2014},
+  month = dec,
+  publisher = {Springer Science and Business Media {LLC}},
+  volume = {15},
+  number = {12},
+  author = {Michael I Love and Wolfgang Huber and Simon Anders},
+  title = {Moderated estimation of fold change and dispersion for {RNA}-seq data with {DESeq}2},
+  journal = {Genome Biology}
+}
+```
