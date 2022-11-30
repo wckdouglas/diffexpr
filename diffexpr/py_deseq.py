@@ -2,11 +2,19 @@
 Running DESeq2 from python via rpy2
 
 Adopted from: https://stackoverflow.com/questions/41821100/running-deseq2-through-rpy2
+
+If there are any functions that is missing for your need, feel free to file an 
+[issue](https://github.com/wckdouglas/diffexpr/issues) or even better, make a 
+[PR](https://github.com/wckdouglas/diffexpr/pulls)!
+
+A jupyter notebook with examples can be found at:
+https://github.com/wckdouglas/diffexpr/blob/master/example/deseq_example.ipynb
 """
 
 import logging
 
 import numpy as np
+import pandas as pd
 import rpy2.robjects as robjects
 from rpy2.robjects import Formula, pandas2ri
 from rpy2.robjects.conversion import localconverter
@@ -50,12 +58,16 @@ class py_DESeq2:
     """
 
     def __init__(self, count_matrix, design_matrix, design_formula, gene_column="id"):
-        try:
-            assert gene_column in count_matrix.columns, "Wrong gene id column name"
-            gene_id = count_matrix[gene_column]
-        except AttributeError:
-            sys.exit("Wrong Pandas dataframe?")
 
+        # input validation
+        for df in [count_matrix, design_matrix]:
+            if not isinstance(df, pd.DataFrame):
+                raise ValueError("count_matrix and design_matrix should be pd.DataFrame type")
+
+        if gene_column not in count_matrix.columns:
+            raise ValueError("The given gene_column name is not a column in  count_matrix dataframe")
+
+        # set up the deseq2 object
         self.dds = None
         self.result = None
         self.deseq_result = None
@@ -75,10 +87,8 @@ class py_DESeq2:
 
     def run_deseq(self, **kwargs):
         """
-        actually running deseq2
-
-        Args:
-            **kwargs: Any keyword arguments for DESeq
+        actually running deseq2 and setup the dds and comparison
+        fields in the object
 
         From DESeq2 manual:
 
@@ -98,6 +108,12 @@ class py_DESeq2:
             parallel = FALSE,
             BPPARAM = bpparam()
         )
+
+        Args:
+            **kwargs: Any keyword arguments for DESeq
+        Returns:
+            NoneType
+
         """
 
         for key, value in kwargs.items():
@@ -110,6 +126,13 @@ class py_DESeq2:
         """
         DESeq2: result(dds, contrast)
         making a dds.deseq_result pandas dataframe
+
+        Args:
+            contrast (list[str]): list of string annotating the contrast to compute
+                (see DESeq2 manual http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#contrasts)
+            **kwargs (Dict[str,Any]): any other parameters to pass into DESeq2::results function
+        Returns:
+            NoneType
         """
 
         if contrast:
@@ -130,6 +153,8 @@ class py_DESeq2:
 
     def normalized_count(self):
         """
+        Returns a normalized count data frame
+
         Returns:
             pd.DataFrame: a dataframe in the format of DESeq2::Counts(dds, normalized=TRUE) in R
         """
@@ -147,7 +172,8 @@ class py_DESeq2:
         Perform LFC shrinkage on the DDS object
         see: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
 
-        Be sure to check dds.comparison to see which coef (1-base) to use
+        Be sure to check dds.comparison to see which coef (1-base because it's passing into the R code)
+        to use
 
         Args:
             coef (int): 1-based index for selecting which of dds.comparison to show
@@ -166,6 +192,11 @@ class py_DESeq2:
         """
         deseq varianceStabilizingTransformation
         see: https://rdrr.io/bioc/DESeq2/man/varianceStabilizingTransformation.html
+
+        essentially running R code:
+
+        >>> vsd = DESeq2::varianceStabilizingTransformation(dds, blind=True, fitType="parametric")
+        >>> SummarizedExperiment::assay(vsd)
 
         Example:
 
@@ -198,4 +229,5 @@ class py_DESeq2:
         with localconverter(robjects.default_converter + pandas2ri.converter):
             vst_counts = robjects.conversion.rpy2py(vst_df)
 
+        logger.info("Processed variance stablizing transformation")
         return vst_counts.reset_index().rename(columns={"index": self.gene_column})
