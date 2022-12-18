@@ -109,9 +109,8 @@ jobs:
           context: .
           push: true
           target: diffexpr
-          cache-to: |
-            user/app:cache
-            type=local,src=path/to/dir
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:latest
             ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:${{ github.sha }}
@@ -122,9 +121,8 @@ jobs:
           context: .
           push: true
           target: diffexpr_dev
-          cache-to: |
-            user/app:cache
-            type=local,src=path/to/dir
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr_dev:latest
             ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr_dev:${{ github.sha }}
