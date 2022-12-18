@@ -113,8 +113,8 @@ jobs:
             user/app:cache
             type=local,src=path/to/dir
           tags: 
-            ghcr.io/${{ github.repository }}/diffexpr-dev:latest
-            ghcr.io/${{ github.repository }}/diffexpr-dev:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:${{ github.sha }}
 
       - name: Build and push Dev Docker image
         uses: docker/build-push-action@v3
@@ -126,5 +126,5 @@ jobs:
             user/app:cache
             type=local,src=path/to/dir
           tags: 
-            ghcr.io/${{ github.repository }}/diffexpr_dev:latest
-            ghcr.io/${{ github.repository }}/diffexpr_dev:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr_dev:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr_dev:${{ github.sha }}
