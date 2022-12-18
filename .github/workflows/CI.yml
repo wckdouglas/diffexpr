@@ -117,3 +117,16 @@ jobs:
             type=local,src=path/to/dir
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build and push Dev Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: true
+          target: diffexpr_dev
+          cache-to: |
+            user/app:cache
+            type=local,src=path/to/dir
+          tags: 
+            ghcr.io/${{ github.repository }}/diffexpr-dev:latest
+            ghcr.io/${{ github.repository }}/diffexpr-dev:${{ github.sha }}
