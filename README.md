@@ -29,7 +29,7 @@ This should be reproducible by:
 docker run \
     -p 1234:1234 \
     --mount type=bind,source="$(pwd)",target=/jupyter \
-    ghcr.io/wckdouglas/diffexpr:master
+    ghcr.io/wckdouglas/diffexpr-dev:latest
 ```
 
 
