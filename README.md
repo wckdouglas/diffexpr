@@ -29,9 +29,10 @@ This should be reproducible by:
 docker run \
     -p 1234:1234 \
     --mount type=bind,source="$(pwd)",target=/jupyter \
-    ghcr.io/wckdouglas/diffexpr-dev:latest
+    ghcr.io/wckdouglas/diffexpr/diffexpr-dev:latest
 ```
 
+and go to https://localhost:1234 to access the jupyter lab instance
 
 ## Citation ##
 :bangbang: Please cite the original [DESeq2 paper](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8) if you used this package in your work:
