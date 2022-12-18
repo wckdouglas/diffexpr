@@ -23,6 +23,15 @@ python setup.py install
 ## Example ##
 An example of running DESeq2 in *python* using ```diffexp``` package is provided [here](https://github.com/wckdouglas/diffexp/blob/master/example/deseq_example.ipynb).
 
+This should be reproducible by:
+
+```bash
+docker run \
+    -p 1234:1234 \
+    --mount type=bind,source="$(pwd)",target=/jupyter \
+    ghcr.io/wckdouglas/diffexpr:master
+```
+
 
 ## Citation ##
 :bangbang: Please cite the original [DESeq2 paper](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8) if you used this package in your work:
