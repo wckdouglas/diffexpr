@@ -111,5 +111,9 @@ jobs:
         with:
           context: .
           push: true
+          build-contexts: target=diffexpr
+          cache-to: |
+            user/app:cache
+            type=local,src=path/to/dir
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
