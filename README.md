@@ -32,7 +32,7 @@ docker run \
     ghcr.io/wckdouglas/diffexpr/diffexpr-dev:latest
 ```
 
-and go to https://localhost:1234 to access the jupyter lab instance
+and go to http://localhost:1234 to access the jupyter lab instance
 
 ## Citation ##
 :bangbang: Please cite the original [DESeq2 paper](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8) if you used this package in your work:
