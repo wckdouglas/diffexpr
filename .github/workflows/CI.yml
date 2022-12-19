@@ -48,12 +48,6 @@ jobs:
           conda config --show
 
       - name: Install dependencies
-        uses: actions/cache@v3
-        with:
-          path: /usr/share/miniconda
-          key: ${{ matrix.python-version }}-conda-cache-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ matrix.python-version }}-conda-cache
         run: |
           conda install mamba
           mamba install pandas tzlocal rpy2 biopython ReportLab pytest-cov codecov  bioconductor-deseq2 gfortran_linux-64 bioconductor-apeglm
@@ -104,13 +98,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          tags: |
-            type=ref,event=push
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -123,7 +110,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:${steps.meta.outputs.tags}
+            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:${{ github.ref_name }}
             ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:${{ github.sha }}
 
       - name: Build and push Dev Docker image
@@ -135,5 +122,5 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr-dev:${steps.meta.outputs.tags}
+            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr-dev:${{ github.ref_name }}
             ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr-dev:${{ github.sha }}
