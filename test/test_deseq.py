@@ -31,13 +31,14 @@ def count_matrix():
 
 
 def sample_metadata():
+    df = count_matrix()
     sample_df = (
         pd.DataFrame({"samplename": df.columns})
         .query('samplename != "id"')
-        .assign(sample=lambda d: d.samplename.str.extract("([AB])_", expand=False))
-        .assign(batch=lambda d: d.samplename.str.extract("_([123])", expand=False))
+        .assign(sample=lambda d: d["samplename"].str.extract("([AB])_", expand=False))
+        .assign(batch=lambda d: d["samplename"].str.extract("_([123])", expand=False))
     )
-    sample_df.index = sample_df.samplename
+    sample_df.index = sample_df["samplename"]
     return sample_df
 
 
