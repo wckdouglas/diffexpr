@@ -9,9 +9,7 @@ env:
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches: [ "*" ]
 
 jobs:
   build-and-ci:
@@ -47,8 +45,6 @@ jobs:
           conda config --show-sources
           conda config --show
 
-
-
       - name: Install dependencies
         run: |
           conda install mamba
@@ -76,7 +72,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          coverage run -m pytest
+          coverage run -m pytest -vvv
 
       - name: codecov
         run: |
@@ -105,6 +101,7 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
+        if: ${{ github.ref_name }} == "master"
         with:
           context: .
           push: true
@@ -112,7 +109,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:${{ github.ref_name }}
             ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:${{ github.sha }}
 
       - name: Build and push Dev Docker image
@@ -124,5 +121,5 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr-dev:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr-dev:${{ github.ref_name }}
             ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr-dev:${{ github.sha }}
