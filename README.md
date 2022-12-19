@@ -1,12 +1,11 @@
 # diffexpr # 
 [![CI](https://github.com/wckdouglas/diffexpr/workflows/CI/badge.svg)](https://github.com/wckdouglas/diffexpr/actions) [![codecov](https://codecov.io/gh/wckdouglas/diffexpr/branch/master/graph/badge.svg)](https://codecov.io/gh/wckdouglas/diffexpr)
 
-
-A python package using ```rpy2``` to port [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) into python.
+A python package using `rpy2` to port [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) into python.
 
 ## INSTALL ##
-Dependencies are ```pandas``` (python), ```rpy2``` (python), and ```DESeq2``` (R)
-Best way to build dependencies should be via conda. 
+Dependencies are `pandas` (python), `rpy2` (python), and `DESeq2` (R)
+Best way to install the dependency packages should be via [conda](https://docs.conda.io/en/latest/): 
 
 ```
 conda config --add channels defaults
@@ -27,7 +26,7 @@ We build two docker images in our [CI workflow](https://github.com/wckdouglas/di
 2. diffexpr-dev (`ghcr.io/wckdouglas/diffexpr/diffexpr-dev`): is the same as `diffexpr`, but with additional python packages (`matplotlib`, `seaborn`, and `jupyterlab`) for using this package in jupyter notebook analysis (see [below](#example) for how to spin up the jupyterlab instance), feel free to file an issue or put a PR to include your favorite packages!
 
 ## <a name="example"></a> Example ##
-An example of running DESeq2 in *python* using ```diffexp``` package is provided [here](https://github.com/wckdouglas/diffexp/blob/master/example/deseq_example.ipynb).
+An example of running DESeq2 in *python* using `diffexpr` package is provided [here](https://github.com/wckdouglas/diffexp/blob/master/example/deseq_example.ipynb).
 
 This should be reproducible by:
 
