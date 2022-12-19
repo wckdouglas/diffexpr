@@ -56,3 +56,7 @@ and go to http://localhost:1234 to access the jupyter lab instance
   journal = {Genome Biology}
 }
 ```
+
+## Alternatives ##
+
+[pyDESeq2](https://github.com/owkin/PyDESeq2) is a pure python implementation of DESeq2. 
