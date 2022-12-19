@@ -38,6 +38,7 @@ def sample_metadata():
         .assign(sample=lambda d: d["samplename"].str.extract("([AB])_", expand=False))
         .assign(batch=lambda d: d["samplename"].str.extract("_([123])", expand=False))
         .pipe(lambda d: d.set_index(d["samplename"]))
+        # this duplicates the "samplename" column into index, needed for `setup_deseq`
     )
     return sample_df
 
