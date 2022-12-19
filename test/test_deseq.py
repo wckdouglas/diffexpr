@@ -18,9 +18,7 @@ def run_r():
     os.system("Rscript deseq.R")
 
 
-@pytest.fixture(scope="module")
-def setup_deseq():
-    df = pd.read_csv(test_data_path + "/ercc.tsv", sep="\t")
+def count_matrix():
     """
         id     A_1     A_2     A_3     B_1     B_2     B_3
     0  ERCC-00002  111461  106261  107547  333944  199252  186947
@@ -29,7 +27,10 @@ def setup_deseq():
     3  ERCC-00009    4669    4431    4211    6939    4155    3647
     4  ERCC-00012       0       2       0       0       0       0
     """
+    return pd.read_csv(test_data_path + "/ercc.tsv", sep="\t")
 
+
+def sample_metadata():
     sample_df = (
         pd.DataFrame({"samplename": df.columns})
         .query('samplename != "id"')
@@ -37,6 +38,13 @@ def setup_deseq():
         .assign(batch=lambda d: d.samplename.str.extract("_([123])", expand=False))
     )
     sample_df.index = sample_df.samplename
+    return sample_df
+
+
+@pytest.fixture(scope="module")
+def setup_deseq():
+    df = count_matrix()
+    sample_df = sample_metadata()
 
     dds = py_DESeq2(
         count_matrix=df,
@@ -46,6 +54,36 @@ def setup_deseq():
     )
 
     return df, dds
+
+
+@pytest.mark.parametrize("matrix", [("count"), ("metadata")])
+def setup_deseq_not_dataframe_exception(matrix):
+    df = pd.read_csv(test_data_path + "/ercc.tsv", sep="\t")
+    sample_df = sample_metadata()
+    if matrix == "count":
+        df = df.values
+    elif matrix == "metadata":
+        sample_df = sample_df.values
+
+    with pytest.raises(ValueError, match="should be pd.DataFrame type"):
+        py_DESeq2(
+            count_matrix=df,
+            design_matrix=sample_df,
+            design_formula="~ batch + sample",
+            gene_column="id",
+        )
+
+
+def setup_deseq_no_id_exception():
+    df = pd.read_csv(test_data_path + "/ercc.tsv", sep="\t")
+    sample_df = sample_metadata()
+    with pytest.raises(ValueError, match="should be pd.DataFrame type"):
+        py_DESeq2(
+            count_matrix=df,
+            design_matrix=sample_df,
+            design_formula="~ batch + sample",
+            gene_column="id1",
+        )
 
 
 def test_deseq(setup_deseq):
