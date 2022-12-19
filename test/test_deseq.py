@@ -59,7 +59,7 @@ def setup_deseq():
 
 
 @pytest.mark.parametrize("matrix", [("count"), ("metadata")])
-def setup_deseq_not_dataframe_exception(matrix):
+def test_deseq_not_dataframe_exception(matrix):
     df = pd.read_csv(test_data_path + "/ercc.tsv", sep="\t")
     sample_df = sample_metadata()
     if matrix == "count":
@@ -76,7 +76,7 @@ def setup_deseq_not_dataframe_exception(matrix):
         )
 
 
-def setup_deseq_no_id_exception():
+def test_deseq_no_id_exception():
     df = pd.read_csv(test_data_path + "/ercc.tsv", sep="\t")
     sample_df = sample_metadata()
     with pytest.raises(ValueError, match="should be pd.DataFrame type"):
