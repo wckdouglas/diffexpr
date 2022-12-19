@@ -20,7 +20,13 @@ Rscript setup.R #to install DESeq2 correctly
 python setup.py install
 ```
 
-## Example ##
+## Docker ##
+
+We build two docker images in our [CI workflow](https://github.com/wckdouglas/diffexpr/blob/98166d9ee7c078520dfb55535634a5cdeaf477cf/.github/workflows/CI.yml#L106-L128):
+1. diffexpr (`ghcr.io/wckdouglas/diffexpr/diffexpr`): contains minimal dependencies for executing code in this package
+2. diffexpr-dev (`ghcr.io/wckdouglas/diffexpr/diffexpr-dev`): is the same as `diffexpr`, but with additional python packages (`matplotlib`, `seaborn`, and `jupyterlab`) for using this package in jupyter notebook analysis (see [below](#example) for how to spin up the jupyterlab instance), feel free to file an issue or put a PR to include your favorite packages!
+
+## <a name="example"></a> Example ##
 An example of running DESeq2 in *python* using ```diffexp``` package is provided [here](https://github.com/wckdouglas/diffexp/blob/master/example/deseq_example.ipynb).
 
 This should be reproducible by:
