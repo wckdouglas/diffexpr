@@ -112,7 +112,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:${GITHUB_REF##*/}
             ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr:${{ github.sha }}
 
       - name: Build and push Dev Docker image
@@ -124,5 +124,5 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr-dev:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr-dev:${GITHUB_REF##*/}
             ${{ env.REGISTRY }}/${{ github.repository }}/diffexpr-dev:${{ github.sha }}
