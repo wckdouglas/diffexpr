@@ -79,7 +79,7 @@ def test_deseq_not_dataframe_exception(matrix):
 def test_deseq_no_id_exception():
     df = pd.read_csv(test_data_path + "/ercc.tsv", sep="\t")
     sample_df = sample_metadata()
-    with pytest.raises(ValueError, match="should be pd.DataFrame type"):
+    with pytest.raises(ValueError, match="The given gene_column name is not a column"):
         py_DESeq2(
             count_matrix=df,
             design_matrix=sample_df,
