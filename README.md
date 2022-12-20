@@ -33,6 +33,8 @@ An example of running DESeq2 in *python* using `diffexpr` package is provided [h
 This should be reproducible by:
 
 ```bash
+git clone https://github.com/wckdouglas/diffexpr.git
+cd diffexpr
 docker run \
     -p 1234:1234 \
     --mount type=bind,source="$(pwd)",target=/jupyter \
@@ -41,9 +43,10 @@ docker run \
 
 and go to http://localhost:1234 to access the jupyter lab instance
 
-The `--mount type=bind,source="$(pwd)",target=/jupyter` option will mount the local filesystem (current directory) at `/jupyter`, such that the container has access to all the files under the current directory:
+The `--mount type=bind,source="$(pwd)",target=/jupyter` option will mount the local filesystem (current directory) at `/jupyter`, such that the container has access to all the files under the current directory, the example notebook is under `/jupyter/example/deseq_example.ipynb`:
 
 ![](example/jupyter.png)
+
 
 ## Citation ##
 :bangbang: Please cite the original [DESeq2 paper](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8) if you used this package in your work:
