@@ -34,7 +34,7 @@ This should be reproducible by:
 docker run \
     -p 1234:1234 \
     --mount type=bind,source="$(pwd)",target=/jupyter \
-    ghcr.io/wckdouglas/diffexpr/diffexpr-dev:latest
+    ghcr.io/wckdouglas/diffexpr/diffexpr-dev:master
 ```
 
 and go to http://localhost:1234 to access the jupyter lab instance
@@ -56,3 +56,7 @@ and go to http://localhost:1234 to access the jupyter lab instance
   journal = {Genome Biology}
 }
 ```
+
+## Alternatives ##
+
+[pyDESeq2](https://github.com/owkin/PyDESeq2) is a pure python implementation of DESeq2. 

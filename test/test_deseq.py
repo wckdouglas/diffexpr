@@ -12,8 +12,8 @@ warnings.filterwarnings("ignore")
 test_data_path = os.path.dirname(os.path.realpath(__file__)) + "/data"
 
 
-@pytest.fixture(scope="module")
-def run_r():
+@pytest.fixture(scope="module", name="run_r")
+def fixture_run_r():
     os.chdir(os.path.dirname(test_data_path))
     os.system("Rscript deseq.R")
 
@@ -31,13 +31,15 @@ def count_matrix():
 
 
 def sample_metadata():
+    df = count_matrix()
     sample_df = (
         pd.DataFrame({"samplename": df.columns})
         .query('samplename != "id"')
-        .assign(sample=lambda d: d.samplename.str.extract("([AB])_", expand=False))
-        .assign(batch=lambda d: d.samplename.str.extract("_([123])", expand=False))
+        .assign(sample=lambda d: d["samplename"].str.extract("([AB])_", expand=False))
+        .assign(batch=lambda d: d["samplename"].str.extract("_([123])", expand=False))
+        .pipe(lambda d: d.set_index(d["samplename"]))
+        # this duplicates the "samplename" column into index, needed for `setup_deseq`
     )
-    sample_df.index = sample_df.samplename
     return sample_df
 
 
@@ -57,7 +59,7 @@ def setup_deseq():
 
 
 @pytest.mark.parametrize("matrix", [("count"), ("metadata")])
-def setup_deseq_not_dataframe_exception(matrix):
+def test_deseq_not_dataframe_exception(matrix):
     df = pd.read_csv(test_data_path + "/ercc.tsv", sep="\t")
     sample_df = sample_metadata()
     if matrix == "count":
@@ -74,10 +76,10 @@ def setup_deseq_not_dataframe_exception(matrix):
         )
 
 
-def setup_deseq_no_id_exception():
+def test_deseq_no_id_exception():
     df = pd.read_csv(test_data_path + "/ercc.tsv", sep="\t")
     sample_df = sample_metadata()
-    with pytest.raises(ValueError, match="should be pd.DataFrame type"):
+    with pytest.raises(ValueError, match="The given gene_column name is not a column"):
         py_DESeq2(
             count_matrix=df,
             design_matrix=sample_df,
