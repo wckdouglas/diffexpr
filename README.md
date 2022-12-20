@@ -5,7 +5,7 @@ A python package using `rpy2` to port [DESeq2](https://bioconductor.org/packages
 
 ## Installation ##
 Dependencies are `pandas` (python), `rpy2` (python), and `DESeq2` (R)
-Best way to setup the environment should be via [docler](#docker), 
+Best way to setup the environment should be via [docker](#docker), 
 but it should also be possible to install the dependency packages using
 [conda](https://docs.conda.io/en/latest/): 
 
