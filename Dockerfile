@@ -26,6 +26,6 @@ RUN conda clean --all --yes
 ENV PYTHONPATH "${PYTHONPATH}:/opt/diffexpr"
 
 FROM diffexpr AS diffexpr_dev
-RUN mamba install jupyterlab matplotlib seaborn
+RUN mamba install jupyterlab matplotlib seaborn r-recommended r-irkernel
 RUN conda clean --all --yes
 CMD ["jupyter-lab", "--allow-root", "--ip", "0.0.0.0", "--port", "1234"]

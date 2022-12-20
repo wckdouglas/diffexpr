@@ -12,8 +12,8 @@ warnings.filterwarnings("ignore")
 test_data_path = os.path.dirname(os.path.realpath(__file__)) + "/data"
 
 
-@pytest.fixture(scope="module")
-def run_r():
+@pytest.fixture(scope="module", name="run_r")
+def fixture_run_r():
     os.chdir(os.path.dirname(test_data_path))
     os.system("Rscript deseq.R")
 
