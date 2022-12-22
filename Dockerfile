@@ -6,9 +6,6 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# R packages
-COPY setup.R /opt/setup.R
-RUN /usr/bin/Rscript /opt/setup.R
 
 # python package (diffexpr)
 RUN conda config --add channels bioconda
@@ -20,6 +17,10 @@ RUN conda config --set always_yes yes --set changeps1 no
 RUN conda install mamba
 RUN mamba install pandas tzlocal \
   rpy2 biopython ReportLab pytest
+
+# R packages
+COPY setup.R /opt/setup.R
+RUN /usr/bin/Rscript /opt/setup.R
 
 FROM base AS diffexpr
 
