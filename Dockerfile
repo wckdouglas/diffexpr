@@ -1,19 +1,20 @@
 FROM continuumio/miniconda3:latest AS base
 
+RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/" >  /etc/apt/sources.list
 RUN apt-get update \
     && apt-get install -y r-base libcurl4-openssl-dev libxml2-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# R packages
 COPY setup.R /opt/setup.R
+RUN /usr/bin/Rscript /opt/setup.R
 
-RUN Rscript /opt/setup.R
-
+# python package (diffexpr)
 RUN conda config --add channels bioconda
 RUN conda config --add channels default
 RUN conda config --add channels anaconda
 RUN conda config --add channels conda-forge
-
 RUN conda config --set always_yes yes --set changeps1 no
 
 RUN conda install mamba
