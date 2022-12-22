@@ -10,9 +10,6 @@ RUN apt-get update \
 RUN pip install pandas tzlocal \
     biopython ReportLab pytest rpy2
 
-# R packages
-COPY setup.R /opt/setup.R
-RUN /usr/bin/Rscript /opt/setup.R
 
 FROM base AS diffexpr
 
