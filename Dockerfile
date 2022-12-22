@@ -1,7 +1,7 @@
 FROM continuumio/miniconda3:latest AS base
 
-RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/" >  /etc/apt/sources.list \
-    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 51716619E084DAB9
+RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/" >  /etc/apt/sources.list 
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 51716619E084DAB9
 
 RUN apt-get update \
     && apt-get install -y r-base libcurl4-openssl-dev libxml2-dev libssl-dev \
