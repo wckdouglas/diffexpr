@@ -2,7 +2,7 @@ FROM continuumio/miniconda3:latest AS base
 
 
 RUN apt-get update \
-    && apt-get install -y r-base r-base-dev libcurl4-openssl-dev libxml2-dev libssl-dev \
+    && apt-get install -y r-base r-base-dev r-bioc-deseq2 libcurl4-openssl-dev libxml2-dev libssl-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
