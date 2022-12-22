@@ -1,4 +1,4 @@
-FROM continuumio/miniconda3:latest AS base
+FROM python:3.9.16-bullseye AS base
 
 
 RUN apt-get update \
@@ -7,17 +7,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 
-# python package (diffexpr)
-RUN conda config --add channels bioconda
-RUN conda config --add channels default
-RUN conda config --add channels anaconda
-RUN conda config --add channels conda-forge
-RUN conda config --set always_yes yes --set changeps1 no
-
-RUN conda install mamba
-RUN mamba install pandas tzlocal \
-    biopython ReportLab pytest
-RUN pip install rpy2
+RUN pip install pandas tzlocal \
+    biopython ReportLab pytest rpy2
 
 # R packages
 COPY setup.R /opt/setup.R
@@ -28,14 +19,13 @@ FROM base AS diffexpr
 COPY . /opt/diffexpr
 
 RUN python /opt/diffexpr/setup.py install
-RUN conda clean --all --yes
 
 ENV PYTHONPATH "${PYTHONPATH}:/opt/diffexpr"
 WORKDIR /opt/diffexpr
 RUN pytest -vvv 
 
 FROM diffexpr AS diffexpr_dev
-RUN mamba install jupyterlab matplotlib seaborn
+RUN pip install jupyterlab matplotlib seaborn
 RUN conda clean --all --yes
 RUN /usr/bin/Rscript -e "install.packages('IRkernel')"
 WORKDIR /opt/diffexpr
