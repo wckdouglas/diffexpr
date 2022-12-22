@@ -7,8 +7,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # R packages
-#COPY setup.R /opt/setup.R
-#RUN /usr/bin/Rscript /opt/setup.R
+COPY setup.R /opt/setup.R
+RUN /usr/bin/Rscript /opt/setup.R
 
 # python package (diffexpr)
 RUN conda config --add channels bioconda
