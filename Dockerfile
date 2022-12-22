@@ -32,7 +32,7 @@ RUN conda clean --all --yes
 
 ENV PYTHONPATH "${PYTHONPATH}:/opt/diffexpr"
 WORKDIR /opt/diffexpr
-#RUN pytest -vvv 
+RUN pytest -vvv 
 
 FROM diffexpr AS diffexpr_dev
 RUN mamba install jupyterlab matplotlib seaborn r-recommended r-irkernel
