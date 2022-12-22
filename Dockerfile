@@ -17,6 +17,8 @@ COPY . /opt/diffexpr
 
 RUN python /opt/diffexpr/setup.py install
 
+RUN /usr/bin/Rscript -e "BiocManager::install(c('apeglm'))"
+
 ENV PYTHONPATH "${PYTHONPATH}:/opt/diffexpr"
 WORKDIR /opt/diffexpr
 RUN pytest -vvv 
