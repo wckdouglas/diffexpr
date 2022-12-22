@@ -26,7 +26,7 @@ RUN pytest -vvv
 
 FROM diffexpr AS diffexpr_dev
 RUN pip install jupyterlab matplotlib seaborn
-RUN /usr/bin/Rscript -e "install.packages('IRkernel')"
+RUN /usr/bin/Rscript -e "install.packages('IRkernel'); IRkernel::installspec(user = FALSE)"
 WORKDIR /opt/diffexpr
 RUN pytest -vvv 
 
