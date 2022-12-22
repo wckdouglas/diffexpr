@@ -2,7 +2,7 @@ FROM continuumio/miniconda3:latest AS base
 
 RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/" >  /etc/apt/sources.list
 RUN apt-get update \
-    && apt-get install -y r-base libcurl4-openssl-dev libxml2-dev \
+    && apt-get install -y r-base libcurl4-openssl-dev libxml2-dev libssl-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
