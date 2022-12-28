@@ -22,9 +22,12 @@ from rpy2.robjects.packages import importr
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("DESeq2")
+r_utils = importr("utils")
 deseq = importr("DESeq2")
 summarized_experiment = importr("SummarizedExperiment")
 
+_DESEQ2_VERSION_INT = r_utils.packageVersion("DESeq2")
+DESEQ2_VERSION = ".".join(map(str, robjects.conversion.rpy2py(_DESEQ2_VERSION_INT)[0]))
 
 to_dataframe = robjects.r("function(x) data.frame(x)")
 
@@ -231,3 +234,12 @@ class py_DESeq2:
 
         logger.info("Processed variance stablizing transformation")
         return vst_counts.reset_index().rename(columns={"index": self.gene_column})
+
+    @property
+    def deseq2_version(self):
+        """
+        Return DESeq2 version number
+
+        :return: string
+        """
+        return DESEQ2_VERSION

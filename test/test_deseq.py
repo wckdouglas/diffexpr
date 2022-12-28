@@ -142,3 +142,8 @@ def test_result(run_r, case, r_table, py_table):
     for col in py_tab.columns:
         if py_tab.columns.dtype == "float64":
             assert np.all(np.isclose(py_tab[col].fillna(0), r_tab[col].fillna(0))), f"{case} failed"
+
+
+def test_deseq2_version(setup_deseq):
+    _, dds = setup_deseq
+    assert dds.deseq2_version == py_DESeq2.DESEQ2_VERSION
