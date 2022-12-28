@@ -20,15 +20,20 @@ from rpy2.robjects import Formula, pandas2ri
 from rpy2.robjects.conversion import localconverter
 from rpy2.robjects.packages import importr
 
+# setup logger
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("DESeq2")
+
+# R packages as python objects
 r_utils = importr("utils")
 deseq = importr("DESeq2")
 summarized_experiment = importr("SummarizedExperiment")
 
+# get version of deseq2
 _DESEQ2_VERSION_INT = r_utils.packageVersion("DESeq2")
 DESEQ2_VERSION = ".".join(map(str, robjects.conversion.rpy2py(_DESEQ2_VERSION_INT)[0]))
 
+# a R function to make matrix into dataframe
 to_dataframe = robjects.r("function(x) data.frame(x)")
 
 
