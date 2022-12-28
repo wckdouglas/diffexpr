@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 import os
+import re
+import shlex
+import subprocess
 import warnings
 
 import numpy as np
@@ -146,4 +149,14 @@ def test_result(run_r, case, r_table, py_table):
 
 def test_deseq2_version(setup_deseq):
     _, dds = setup_deseq
-    assert dds.deseq2_version == py_DESeq2.DESEQ2_VERSION
+
+    # extract R deseq2 version
+    re_ver = re.compile("\d+.\d+.\d+")
+    cmd = """
+        Rscript -e "packageVersion('DESeq2')" 
+    """
+    version_output = subprocess.check_output(shlex.split(cmd)).decode()
+    version = re_ver.findall(version_output)[0]
+
+    # let's see if we extracted the correct version
+    assert dds.deseq2_version == version
