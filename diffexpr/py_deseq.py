@@ -240,6 +240,50 @@ class py_DESeq2:
         logger.info("Processed variance stablizing transformation")
         return vst_counts.reset_index().rename(columns={"index": self.gene_column})
 
+    def rlog(self, blind=True, fit_type="parametric"):
+        """
+        deseq rlog
+        see: https://rdrr.io/bioc/DESeq2/man/rlog.html
+
+        essentially running R code:
+
+        >>> rld = DESeq2::rlog(dds, blind=True, fitType="parametric")
+        >>> SummarizedExperiment::assay(rld)
+
+        Example:
+
+        >>> dds = py_DESeq2(
+                count_matrix=df,
+                design_matrix=sample_df,
+                design_formula="~ batch + sample",
+                gene_column="id",
+        )
+        >>> dds.rlog(blind=True, fit_type="parametric")
+
+
+        Args:
+            blind (bool):  whether to blind the transformation to the experimental design
+            fit_type (str): should be either "parametric", "local", "mean"
+        Returns:
+            pandas.DataFrame: a rlog transformed count table
+        """
+        if self.dds is None:
+            raise ValueError("Empty DESeq object")
+
+        acceptable_fit_types = set(["parametric", "local", "mean"])
+        if fit_type not in acceptable_fit_types:
+            raise ValueError(f"fit_type must be {acceptable_fit_types}")
+
+        rlog_matrix = summarized_experiment.assay(
+            deseq.rlog(self.dds, blind=blind, fitType=fit_type)
+        )
+        rlog_df = to_dataframe(rlog_matrix)
+        with localconverter(robjects.default_converter + pandas2ri.converter):
+            rlog_counts = robjects.conversion.rpy2py(rlog_df)
+
+        logger.info("Processed rlog transformation")
+        return rlog_counts.reset_index().rename(columns={"index": self.gene_column})
+
     @property
     def deseq2_version(self):
         """
