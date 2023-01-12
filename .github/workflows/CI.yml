@@ -10,6 +10,9 @@ env:
 on:
   push:
     branches: [ "*" ]
+  pull_request:
+    types: [opened, ready_for_review]
+
 
 jobs:
   build-and-ci:
