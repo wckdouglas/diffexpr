@@ -130,6 +130,16 @@ def test_vst(setup_deseq, blind, fit_type):
 
 
 @pytest.mark.parametrize(
+    "blind,fit_type",
+    [(True, "parametric"), (True, "local"), (True, "mean"), (False, "parametric"), (False, "local"), (False, "mean")],
+)
+def test_rlog(setup_deseq, blind, fit_type):
+    df, dds = setup_deseq
+    rlog = dds.rlog(blind=blind, fit_type=fit_type)
+    assert rlog.shape == df.shape
+
+
+@pytest.mark.parametrize(
     "case,r_table,py_table",
     [
         ("deseq", "R_deseq.tsv", "py_deseq.tsv"),
