@@ -245,6 +245,9 @@ class py_DESeq2:
         deseq rlog
         see: https://rdrr.io/bioc/DESeq2/man/rlog.html
 
+        TODO: DESeq2 version of this function accepts two additional optional arguments 
+        'intercept' and 'betaPriorVar' that have not been explicitly ported here.
+
         essentially running R code:
 
         >>> rld = DESeq2::rlog(dds, blind=True, fitType="parametric")
