@@ -47,6 +47,7 @@ class py_DESeq2:
         design_matrix (pd.DataFrame): an design matrix in the form of pandas dataframe, see DESeq2 manual, samplenames as rownames
         design_formula (str): see DESeq2 manual, example: "~ treatment""
         gene_column (str): column name of gene id columns, example "id"
+        threads (int): how many threads to used in running deseq
 
 
     count_matrix example::
@@ -87,6 +88,7 @@ class py_DESeq2:
         self.gene_column = gene_column
         self.gene_id = count_matrix[self.gene_column]
         self.samplenames = count_matrix.columns[count_matrix.columns != self.gene_column]
+        self.parallel = threads > 1
         with localconverter(robjects.default_converter + pandas2ri.converter):
             self.count_matrix = robjects.conversion.py2rpy(count_matrix.set_index(self.gene_column))
             self.design_matrix = robjects.conversion.py2rpy(design_matrix)
@@ -129,7 +131,7 @@ class py_DESeq2:
         for key, value in kwargs.items():
             if key == "reduced":
                 kwargs[key] = Formula(value)
-        self.dds = deseq.DESeq(self.dds, **kwargs)
+        self.dds = deseq.DESeq(self.dds, parallel=self.parallel, **kwargs)
         self.comparison = list(deseq.resultsNames(self.dds))
 
     def get_deseq_result(self, contrast=None, **kwargs):
@@ -147,13 +149,13 @@ class py_DESeq2:
 
         if contrast:
             if len(contrast) == 3:
-                R_contrast = robjects.vectors.StrVector(np.array(contrast))
+                r_contrast = robjects.vectors.StrVector(np.array(contrast))
             else:
                 if len(contrast) != 2:
                     raise ValueError("Contrast must be length of 3 or 2")
-                R_contrast = robjects.ListVector({None: con for con in contrast})
+                r_contrast = robjects.ListVector({None: con for con in contrast})
             logger.info("Using contrast: %s" % contrast)
-            self.result = deseq.results(self.dds, contrast=R_contrast, **kwargs)  # Robject
+            self.result = deseq.results(self.dds, contrast=r_contrast, parallel=self.parallel, **kwargs)  # Robject
         else:
             self.result = deseq.results(self.dds, **kwargs)  # R object
         self.deseq_result = to_dataframe(self.result)  # R dataframe
@@ -192,7 +194,7 @@ class py_DESeq2:
         Returns:
             pandas.DataFrame: a deseq2 result table
         """
-        lfc = deseq.lfcShrink(self.dds, res=self.result, coef=coef, type=method, **kwargs)
+        lfc = deseq.lfcShrink(self.dds, res=self.result, coef=coef, type=method, parallel=self.parallel, **kwargs)
         with localconverter(robjects.default_converter + pandas2ri.converter):
             lfc = robjects.conversion.rpy2py(to_dataframe(lfc))
 
