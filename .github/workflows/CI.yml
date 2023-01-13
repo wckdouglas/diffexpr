@@ -103,7 +103,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Build and push Docker image
-        if: github.ref_name  == "master"
+        if: github.ref_name  == 'master'
         uses: docker/build-push-action@v3
         with:
           context: .
