@@ -27,6 +27,7 @@ logger = logging.getLogger("DESeq2")
 # R packages as python objects
 r_utils = importr("utils")
 deseq = importr("DESeq2")
+multicore = importr('BiocParallel')
 summarized_experiment = importr("SummarizedExperiment")
 
 # get version of deseq2
@@ -65,7 +66,8 @@ class py_DESeq2:
 
     """
 
-    def __init__(self, count_matrix, design_matrix, design_formula, gene_column="id"):
+    def __init__(self, count_matrix, design_matrix, design_formula, gene_column="id", threads=4):
+        multicore.register(multicore.MulticoreParam(threads))
 
         # input validation
         for df in [count_matrix, design_matrix]:
@@ -175,7 +177,7 @@ class py_DESeq2:
         logger.info("Normalizing counts")
         return self.normalized_count_df
 
-    def lfcShrink(self, coef, method="apeglm"):
+    def lfcShrink(self, coef, method="apeglm", **kwargs):
         """
         Perform LFC shrinkage on the DDS object
         see: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
@@ -190,7 +192,7 @@ class py_DESeq2:
         Returns:
             pandas.DataFrame: a deseq2 result table
         """
-        lfc = deseq.lfcShrink(self.dds, res=self.result, coef=coef, type=method)
+        lfc = deseq.lfcShrink(self.dds, res=self.result, coef=coef, type=method, **kwargs)
         with localconverter(robjects.default_converter + pandas2ri.converter):
             lfc = robjects.conversion.rpy2py(to_dataframe(lfc))
 
