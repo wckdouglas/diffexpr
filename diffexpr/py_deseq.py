@@ -132,6 +132,8 @@ class py_DESeq2:
         for key, value in kwargs.items():
             if key == "reduced":
                 kwargs[key] = Formula(value)
+            if key == "parallel":
+                raise ValueError("parallel is inferred from the provided thread count")
         self.dds = deseq.DESeq(self.dds, parallel=self.parallel, **kwargs)
         self.comparison = list(deseq.resultsNames(self.dds))
 
