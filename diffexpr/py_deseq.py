@@ -46,9 +46,10 @@ class py_DESeq2:
         count_matrix (pd.DataFrame): should be a pandas dataframe with each column as count, and a id column for gene id
         design_matrix (pd.DataFrame): an design matrix in the form of pandas dataframe, see DESeq2 manual, samplenames as rownames
         design_formula (str): see DESeq2 manual, example: "~ treatment""
-        gene_column (str): column name of gene id columns, example "id"
+        gene_column (str): column name of gene id columns (default: "id")
         threads (int): how many threads to used in running deseq, if threads > 1 is provided,
             `parallel=True` will be used in `DESeq2::DESeq`, `DESeq2::results`, and `DESeq2::lfcShrink`
+            (default: 1)
 
 
     count_matrix example::
@@ -68,7 +69,9 @@ class py_DESeq2:
 
     """
 
-    def __init__(self, count_matrix, design_matrix, design_formula, gene_column="id", threads=4):
+    def __init__(self, count_matrix, design_matrix, design_formula, gene_column="id", threads=1):
+        if not isinstance(threads, int): 
+            raise ValueError("threads must be an integer")
         multicore.register(multicore.MulticoreParam(threads))
 
         # input validation
