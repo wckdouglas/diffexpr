@@ -45,4 +45,5 @@ RUN pytest -vvv
 # docker run will spin up a jupyter lab instance at port 1234
 # docker run -p 1234:1234 should be allow access from outside the 
 # container
+WORKDIR /
 CMD ["jupyter-lab", "--allow-root", "--ip", "0.0.0.0", "--port", "1234"]
