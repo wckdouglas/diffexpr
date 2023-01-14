@@ -47,7 +47,8 @@ class py_DESeq2:
         design_matrix (pd.DataFrame): an design matrix in the form of pandas dataframe, see DESeq2 manual, samplenames as rownames
         design_formula (str): see DESeq2 manual, example: "~ treatment""
         gene_column (str): column name of gene id columns, example "id"
-        threads (int): how many threads to used in running deseq
+        threads (int): how many threads to used in running deseq, if threads > 1 is provided,
+            `parallel=True` will be used in `DESeq2::DESeq`, `DESeq2::results`, and `DESeq2::lfcShrink`
 
 
     count_matrix example::
