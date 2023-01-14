@@ -56,6 +56,7 @@ def setup_deseq():
         design_matrix=sample_df,
         design_formula="~ batch + sample",
         gene_column="id",
+        threads=2,
     )
 
     return df, dds
