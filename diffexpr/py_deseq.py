@@ -19,6 +19,7 @@ import rpy2.robjects as robjects
 from rpy2.robjects import Formula, pandas2ri
 from rpy2.robjects.conversion import localconverter
 from rpy2.robjects.packages import importr
+from typing import Dict
 
 # setup logger
 logging.basicConfig(level=logging.INFO)
@@ -27,6 +28,7 @@ logger = logging.getLogger("DESeq2")
 # R packages as python objects
 r_utils = importr("utils")
 deseq = importr("DESeq2")
+tximport = importr("tximport")
 multicore = importr('BiocParallel')
 summarized_experiment = importr("SummarizedExperiment")
 
@@ -100,6 +102,25 @@ class py_DESeq2:
         self.dds = deseq.DESeqDataSetFromMatrix(
             countData=self.count_matrix, colData=self.design_matrix, design=self.design_formula
         )
+    
+    @classmethod
+    def from_kallisto(cls, h5_file_list: Dict[str,str], design_matrix: pd.DataFrame, design_formula: str, tx2gene: pd.DataFrame):
+        """
+        Tximport kallisto files
+
+        :param h5_file_list: dictionary of key: sample name, value: abundance.h5 file
+        :param design_matrix: an design matrix in the form of pandas dataframe, see DESeq2 manual, samplenames as rownames
+        :param str design_formula: see DESeq2 manual, example: "~ treatment""
+        """
+        files = robjects.StrVector(list(h5_file_list.values()))
+        files.names = list(h5_file_list.keys())
+        cls.design_formula = Formula(design_formula)
+        cls.design_matrix = robjects.conversion.py2rpy(design_matrix)
+        tx2gene = robjects.conversion.py2rpy(tx2gene)
+        txi = tximport.tximport(files, type = "kallisto", txOut = False, tx2gene = tx2gene)
+        cls.dds = deseq.DESeqDataSetFromTximport(txi, colData=cls.design_matrix, design=cls.design_formula)
+        return cls
+        
 
     def run_deseq(self, **kwargs):
         """
