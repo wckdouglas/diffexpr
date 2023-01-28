@@ -175,6 +175,8 @@ def test_deseq2_version(setup_deseq):
 
 def test_kallisto():
 
+    import pandas as pd
+
     from diffexpr import py_deseq
 
     h5_list = {
