@@ -173,17 +173,20 @@ def test_deseq2_version(setup_deseq):
     assert dds.deseq2_version == version
 
 
-def not_test():
+def test_kallisto():
 
     from diffexpr import py_deseq
+
     h5_list = {
-        "quant1": "test/data/quant1/abundance.h5",
-        "quant2": "test/data/quant1/abundance.h5",
+        "quant1": f"{test_data_path}/quant1/abundance.h5",
+        "quant2": f"{test_data_path}/quant2/abundance.h5",
     }
-    sample_df = pd.DataFrame({
-        "sample": ["quant1", "quant2"],
-        "condition": ["1", "2"],
-    }).set_index("sample")
+    sample_df = pd.DataFrame(
+        {
+            "sample": ["quant1", "quant2"],
+            "condition": ["1", "2"],
+        }
+    ).set_index("sample")
     design = "~ condition"
 
     transcripts = """
@@ -202,17 +205,11 @@ def not_test():
     ENST00000394331.3
     ENST00000243103.3
     """
-    tx = transcripts.strip().split('\n')
-    gene = list(map(lambda x: x.split('.')[-1], tx))
+    tx = transcripts.strip().split("\n")
+    gene = list(map(lambda x: x.split(".")[-1], tx))
 
-    tx2gene = pd.DataFrame({
-        "TXNAME": tx, "GENEID":gene
-    })
+    tx2gene = pd.DataFrame({"TXNAME": tx, "GENEID": gene})
 
-    dds=py_deseq.py_DESeq2(
-        count_matrix=h5_list,
-        design_matrix=sample_df,
-        design_formula=design,
-        tx2gene=tx2gene,
-        kallisto=True
+    dds = py_deseq.py_DESeq2(
+        count_matrix=h5_list, design_matrix=sample_df, design_formula=design, tx2gene=tx2gene, kallisto=True
     )

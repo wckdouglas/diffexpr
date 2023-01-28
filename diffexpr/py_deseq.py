@@ -12,6 +12,7 @@ https://github.com/wckdouglas/diffexpr/blob/master/example/deseq_example.ipynb
 """
 
 import logging
+from typing import Dict
 
 import numpy as np
 import pandas as pd
@@ -19,7 +20,6 @@ import rpy2.robjects as robjects
 from rpy2.robjects import Formula, pandas2ri
 from rpy2.robjects.conversion import localconverter
 from rpy2.robjects.packages import importr
-from typing import Dict
 
 # setup logger
 logging.basicConfig(level=logging.INFO)
@@ -29,7 +29,7 @@ logger = logging.getLogger("DESeq2")
 r_utils = importr("utils")
 deseq = importr("DESeq2")
 tximport = importr("tximport")
-multicore = importr('BiocParallel')
+multicore = importr("BiocParallel")
 summarized_experiment = importr("SummarizedExperiment")
 
 # get version of deseq2
@@ -72,11 +72,12 @@ class py_DESeq2:
 
     """
 
-    def __init__(self, count_matrix, design_matrix, design_formula, gene_column="id", threads=1, kallisto=False, tx2gene=None):
-        if not isinstance(threads, int): 
+    def __init__(
+        self, count_matrix, design_matrix, design_formula, gene_column="id", threads=1, kallisto=False, tx2gene=None
+    ):
+        if not isinstance(threads, int):
             raise ValueError("threads must be an integer")
         multicore.register(multicore.MulticoreParam(threads))
-
 
         # set up the deseq2 object
         self.dds = None
@@ -93,17 +94,16 @@ class py_DESeq2:
             self.from_kallisto(count_matrix, design_matrix, design_formula, tx2gene)
         else:
             self.init_matrix(count_matrix, design_matrix, design_formula, gene_column)
-    
 
     def init_matrix(self, count_matrix, design_matrix, design_formula, gene_column):
         """
         Initialize deseq from count matrix
 
         Args:
-            count_matrix (pd.DataFrame): 
+            count_matrix (pd.DataFrame):
             design_matrix (pd.DataFrame):
-            design_formula (str): 
-            gene_column (str): 
+            design_formula (str):
+            gene_column (str):
         """
         # input validation
         for df in [count_matrix, design_matrix]:
@@ -123,8 +123,10 @@ class py_DESeq2:
         self.dds = deseq.DESeqDataSetFromMatrix(
             countData=self.count_matrix, colData=self.design_matrix, design=self.design_formula
         )
-    
-    def from_kallisto(self, h5_file_list: Dict[str,str], design_matrix: pd.DataFrame, design_formula: str, tx2gene: pd.DataFrame):
+
+    def from_kallisto(
+        self, h5_file_list: Dict[str, str], design_matrix: pd.DataFrame, design_formula: str, tx2gene: pd.DataFrame
+    ):
         """
         Initialize deseq from Tximport kallisto files
 
@@ -138,10 +140,9 @@ class py_DESeq2:
         with localconverter(robjects.default_converter + pandas2ri.converter):
             self.design_matrix = robjects.conversion.py2rpy(design_matrix)
             tx2gene = robjects.conversion.py2rpy(tx2gene)
-        txi = tximport.tximport(files, type = "kallisto", txOut = False, tx2gene = tx2gene)
+        self.txi = tximport.tximport(files, type="kallisto", txOut=False, tx2gene=tx2gene)
         logger.info(f"Read kallisto files: {files}")
-        self.dds = deseq.DESeqDataSetFromTximport(txi, colData=self.design_matrix, design=self.design_formula)
-        
+        self.dds = deseq.DESeqDataSetFromTximport(self.txi, colData=self.design_matrix, design=self.design_formula)
 
     def run_deseq(self, **kwargs):
         """
@@ -297,7 +298,7 @@ class py_DESeq2:
         deseq rlog
         see: https://rdrr.io/bioc/DESeq2/man/rlog.html
 
-        TODO: DESeq2 version of this function accepts two additional optional arguments 
+        TODO: DESeq2 version of this function accepts two additional optional arguments
         'intercept' and 'betaPriorVar' that have not been explicitly ported here.
 
         essentially running R code:
@@ -329,9 +330,7 @@ class py_DESeq2:
         if fit_type not in acceptable_fit_types:
             raise ValueError(f"fit_type must be {acceptable_fit_types}")
 
-        rlog_matrix = summarized_experiment.assay(
-            deseq.rlog(self.dds, blind=blind, fitType=fit_type)
-        )
+        rlog_matrix = summarized_experiment.assay(deseq.rlog(self.dds, blind=blind, fitType=fit_type))
         rlog_df = to_dataframe(rlog_matrix)
         with localconverter(robjects.default_converter + pandas2ri.converter):
             rlog_counts = robjects.conversion.rpy2py(rlog_df)
