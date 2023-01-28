@@ -45,7 +45,8 @@ class py_DESeq2:
     DESeq2 object through rpy2
 
     Args:
-        count_matrix (pd.DataFrame): should be a pandas dataframe with each column as count, and a id column for gene id
+        count_matrix (Union[pd.DataFrame, Dict[str,str]): should be a pandas dataframe with each column as count, and a id column for gene id,
+            unless kallisto=True, then this is expected to be a dictionary of key: sample name, value: abundance.h5 file
         design_matrix (pd.DataFrame): an design matrix in the form of pandas dataframe, see DESeq2 manual, samplenames as rownames
         design_formula (str): see DESeq2 manual, example: "~ treatment""
         gene_column (str): column name of gene id columns (default: "id")
@@ -71,18 +72,11 @@ class py_DESeq2:
 
     """
 
-    def __init__(self, count_matrix, design_matrix, design_formula, gene_column="id", threads=1):
+    def __init__(self, count_matrix, design_matrix, design_formula, gene_column="id", threads=1, kallisto=False, tx2gene=None):
         if not isinstance(threads, int): 
             raise ValueError("threads must be an integer")
         multicore.register(multicore.MulticoreParam(threads))
 
-        # input validation
-        for df in [count_matrix, design_matrix]:
-            if not isinstance(df, pd.DataFrame):
-                raise ValueError("count_matrix and design_matrix should be pd.DataFrame type")
-
-        if gene_column not in count_matrix.columns:
-            raise ValueError("The given gene_column name is not a column in  count_matrix dataframe")
 
         # set up the deseq2 object
         self.dds = None
@@ -91,10 +85,37 @@ class py_DESeq2:
         self.resLFC = None
         self.comparison = None
         self.normalized_count_df = None
+        self.parallel = threads > 1
+
+        if kallisto:
+            if tx2gene is None:
+                raise ValueError("tx2gene must be specified")
+            self.from_kallisto(count_matrix, design_matrix, design_formula, tx2gene)
+        else:
+            self.init_matrix(count_matrix, design_matrix, design_formula, gene_column)
+    
+
+    def init_matrix(self, count_matrix, design_matrix, design_formula, gene_column):
+        """
+        Initialize deseq from count matrix
+
+        Args:
+            count_matrix (pd.DataFrame): 
+            design_matrix (pd.DataFrame):
+            design_formula (str): 
+            gene_column (str): 
+        """
+        # input validation
+        for df in [count_matrix, design_matrix]:
+            if not isinstance(df, pd.DataFrame):
+                raise ValueError("count_matrix and design_matrix should be pd.DataFrame type")
+
+        if gene_column not in count_matrix.columns:
+            raise ValueError("The given gene_column name is not a column in  count_matrix dataframe")
+
         self.gene_column = gene_column
         self.gene_id = count_matrix[self.gene_column]
         self.samplenames = count_matrix.columns[count_matrix.columns != self.gene_column]
-        self.parallel = threads > 1
         with localconverter(robjects.default_converter + pandas2ri.converter):
             self.count_matrix = robjects.conversion.py2rpy(count_matrix.set_index(self.gene_column))
             self.design_matrix = robjects.conversion.py2rpy(design_matrix)
@@ -103,10 +124,9 @@ class py_DESeq2:
             countData=self.count_matrix, colData=self.design_matrix, design=self.design_formula
         )
     
-    @classmethod
-    def from_kallisto(cls, h5_file_list: Dict[str,str], design_matrix: pd.DataFrame, design_formula: str, tx2gene: pd.DataFrame):
+    def from_kallisto(self, h5_file_list: Dict[str,str], design_matrix: pd.DataFrame, design_formula: str, tx2gene: pd.DataFrame):
         """
-        Tximport kallisto files
+        Initialize deseq from Tximport kallisto files
 
         :param h5_file_list: dictionary of key: sample name, value: abundance.h5 file
         :param design_matrix: an design matrix in the form of pandas dataframe, see DESeq2 manual, samplenames as rownames
@@ -114,12 +134,13 @@ class py_DESeq2:
         """
         files = robjects.StrVector(list(h5_file_list.values()))
         files.names = list(h5_file_list.keys())
-        cls.design_formula = Formula(design_formula)
-        cls.design_matrix = robjects.conversion.py2rpy(design_matrix)
-        tx2gene = robjects.conversion.py2rpy(tx2gene)
+        self.design_formula = Formula(design_formula)
+        with localconverter(robjects.default_converter + pandas2ri.converter):
+            self.design_matrix = robjects.conversion.py2rpy(design_matrix)
+            tx2gene = robjects.conversion.py2rpy(tx2gene)
         txi = tximport.tximport(files, type = "kallisto", txOut = False, tx2gene = tx2gene)
-        cls.dds = deseq.DESeqDataSetFromTximport(txi, colData=cls.design_matrix, design=cls.design_formula)
-        return cls
+        logger.info(f"Read kallisto files: {files}")
+        self.dds = deseq.DESeqDataSetFromTximport(txi, colData=self.design_matrix, design=self.design_formula)
         
 
     def run_deseq(self, **kwargs):
