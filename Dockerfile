@@ -2,7 +2,7 @@ FROM python:3.9.16-bullseye AS base
 
 # installation of R and associated packages (DESeq2)
 RUN apt-get update \
-    && apt-get install -y r-base r-base-dev r-bioc-deseq2 libcurl4-openssl-dev libxml2-dev libssl-dev \
+    && apt-get install -y r-base r-base-dev r-bioc-deseq2 r-bioc-rhdf5 libcurl4-openssl-dev libxml2-dev libssl-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
