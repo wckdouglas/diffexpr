@@ -215,7 +215,7 @@ class py_DESeq2:
         with localconverter(robjects.default_converter + pandas2ri.converter):
             self.deseq_result = robjects.conversion.rpy2py(self.deseq_result)  ## back to pandas dataframe
 
-        if self.gene_id:
+        if self.gene_column is not None:
             self.deseq_result[self.gene_column] = self.gene_id.values
 
     def normalized_count(self):
@@ -231,7 +231,7 @@ class py_DESeq2:
         with localconverter(robjects.default_converter + pandas2ri.converter):
             self.normalized_count_df = robjects.conversion.rpy2py(normalized_count_matrix)
 
-        if self.gene_id:
+        if self.gene_column is not None:
             self.normalized_count_df[self.gene_column] = self.gene_id.values
         logger.info("Normalizing counts")
         return self.normalized_count_df
