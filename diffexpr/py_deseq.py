@@ -87,6 +87,8 @@ class py_DESeq2:
         self.comparison = None
         self.normalized_count_df = None
         self.parallel = threads > 1
+        self.gene_id = None
+        self.gene_column = None
 
         if kallisto:
             if tx2gene is None:
@@ -140,7 +142,9 @@ class py_DESeq2:
         with localconverter(robjects.default_converter + pandas2ri.converter):
             self.design_matrix = robjects.conversion.py2rpy(design_matrix)
             tx2gene = robjects.conversion.py2rpy(tx2gene)
-        self.txi = tximport.tximport(files, type="kallisto", txOut=False, tx2gene=tx2gene)
+        self.txi = tximport.tximport(
+            files, type="kallisto", txOut=False, tx2gene=tx2gene, countsFromAbundance="scaledTPM"
+        )
         logger.info(f"Read kallisto files: {files}")
         self.dds = deseq.DESeqDataSetFromTximport(self.txi, colData=self.design_matrix, design=self.design_formula)
 
@@ -210,7 +214,9 @@ class py_DESeq2:
         self.deseq_result = to_dataframe(self.result)  # R dataframe
         with localconverter(robjects.default_converter + pandas2ri.converter):
             self.deseq_result = robjects.conversion.rpy2py(self.deseq_result)  ## back to pandas dataframe
-        self.deseq_result[self.gene_column] = self.gene_id.values
+
+        if self.gene_id:
+            self.deseq_result[self.gene_column] = self.gene_id.values
 
     def normalized_count(self):
         """
@@ -224,7 +230,9 @@ class py_DESeq2:
         # switch back to python
         with localconverter(robjects.default_converter + pandas2ri.converter):
             self.normalized_count_df = robjects.conversion.rpy2py(normalized_count_matrix)
-        self.normalized_count_df[self.gene_column] = self.gene_id.values
+
+        if self.gene_id:
+            self.normalized_count_df[self.gene_column] = self.gene_id.values
         logger.info("Normalizing counts")
         return self.normalized_count_df
 
