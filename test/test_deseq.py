@@ -171,3 +171,47 @@ def test_deseq2_version(setup_deseq):
 
     # let's see if we extracted the correct version
     assert dds.deseq2_version == version
+
+
+def test_kallisto():
+
+    import pandas as pd
+
+    from diffexpr import py_deseq
+
+    h5_list = {
+        "quant1": f"{test_data_path}/quant1/abundance.h5",
+        "quant2": f"{test_data_path}/quant2/abundance.h5",
+    }
+    sample_df = pd.DataFrame(
+        {
+            "sample": ["quant1", "quant2"],
+            "condition": ["1", "2"],
+        }
+    ).set_index("sample")
+    design = "~ condition"
+
+    transcripts = """
+    ENST00000513300.5
+    ENST00000282507.7
+    ENST00000504685.5
+    ENST00000243108.4
+    ENST00000303450.4
+    ENST00000243082.4
+    ENST00000303406.4
+    ENST00000303460.4
+    ENST00000243056.4
+    ENST00000312492.2
+    ENST00000040584.5
+    ENST00000430889.2
+    ENST00000394331.3
+    ENST00000243103.3
+    """
+    tx = transcripts.strip().split("\n")
+    gene = list(map(lambda x: x.split(".")[-1], tx))
+
+    tx2gene = pd.DataFrame({"TXNAME": tx, "GENEID": gene})
+
+    dds = py_deseq.py_DESeq2(
+        count_matrix=h5_list, design_matrix=sample_df, design_formula=design, tx2gene=tx2gene, kallisto=True
+    )
