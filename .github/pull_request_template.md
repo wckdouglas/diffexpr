@@ -1,4 +1,4 @@
-Description of what this PR does
+Some description of what this PR does ....
 
 ## Checklist
-- [ ] CI pass?
+- [ ] CI pass
